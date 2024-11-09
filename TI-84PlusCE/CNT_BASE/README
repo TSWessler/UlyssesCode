@@ -1,0 +1,79 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+
+To run:
+1. At prompt ===== then press Enter.
+2. 
+
+
+Example 1:
+
+
+
+
+Example 2:
+
+
+
+
+
+
+
+NOTES:
+
+
+
+
+
+
+
+
+
+Header from the file copied/pasted below:
+
+
+Name:
+    CNT_BASE.py
+
+Version:
+    wessler
+    2024 November 8
+    update to: 2024 October 18
+    changes:
+        *improved user-input error-handling
+        *cosmetic changes to be more consistent with other scripts
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *counts from 0 to a max value in a given base (between 2 and 36)
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *base_value (must be between 2 and 36--see CNT_BAS1.py for base-1)
+            *max_value (value in base that counts to--e.g., in base 2 max_value=2 displays 0,1,10 then stops)
+        Output:
+            0: 0
+            1: 1
+            .
+            .
+            .
+            i: j
+
+            it ends when either i==max_number_of_numbers (hard-coded) or j>=max_value
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+
+the order of digits is:
+0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T  U  V  W  X  Y  Z
+0  1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35

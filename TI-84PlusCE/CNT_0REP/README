@@ -1,0 +1,117 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+Ulysses made up a kind of counting that he called "counting by dees" that the pattern is counting by ones, then tens, then hundreds, and so on.
+
+Another way to describe the pattern is that it counts up to the next integer without allowing for any repeats of nonzero digits (with all nonzero digits in front of all zeros).
+
+Ex. 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, ..., 90, 100, 200, 300, ..., 900, 1000, 2000, 3000, ...
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
+Ex:
+1: val_{1}
+2: val_{2}
+3: val_{3}
+.
+.
+.
+n: val_{n}
+
+And terminates when n exceeds some hard-coded value or val_{n} exceeds an input value.
+
+
+To run:
+1. At prompt "Enter max value:" enter a max value then press Enter.
+2. Press Enter when prompted.
+
+
+Example 1:
+
+Enter max value:
+99
+0: 0
+1: 1
+2: 2
+3: 3
+4: 4
+5: 5
+6: 6
+7: 7
+8: 8
+9: 9
+10: 10
+11: 20
+12: 30
+13: 40
+14: 50
+15: 60
+16: 70
+17: 80
+18: 90
+19: 100
+Done!
+Try again sometime!
+
+
+
+
+
+
+
+
+NOTES:
+
+
+
+
+
+
+
+
+
+Header from the file copied/pasted below:
+
+
+Name:
+    CNT_0REP.py
+
+Version:
+    wessler
+    2024 November 8
+    update to: 2024 November 7
+    changes:
+        *cosmetic changes to be more consistent with other scripts
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *counts up but without repeating any non-zero digits
+    *Ulee named this "counting by dees" but we're calling it "counting by no-repeats" or "counting by 0 repeats"
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *max_value
+        Output:
+            0: 0
+            1: 1
+            2: 2
+            .
+            .
+            .
+            i: j
+
+            it ends when either i==max_number_of_numbers (hard-coded) or j>=max_value
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+
+these values get big fast--value is on the order of 10^(number_of_numbers/10)

@@ -1,0 +1,122 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+Ulysses made up a kind of counting that he called "[don't remember]" that the pattern is similar to CNT_0REP, but it counts by ones until entering the hundreds, at which point counts by tens until reaching the thousands, at which point counts by hundreds, and so on.
+
+Another way to describe the pattern is that it counts up to the next integer but allows for only 1 repeating nonzero digit (with all nonzero digits in front of all zeros).
+
+Ex: 0, 1, 2, 3, ..., 98, 99, 100, 110, 120, 130, ..., 980, 990, 1000, 1100, 1200, 1300, ..., 
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
+Ex:
+1: val_{1}
+2: val_{2}
+3: val_{3}
+.
+.
+.
+n: val_{n}
+
+And terminates when n exceeds some hard-coded value or val_{n} exceeds an input value.
+
+
+To run:
+1. At prompt "Enter start value:" enter the value counting will start at then press Enter.
+2. At prompt "Enter max value:" enter the max value to count to then press Enter.
+3. Press Enter when prompted.
+
+
+Example 1:
+
+Enter start value:
+95
+Enter max value:
+249
+0: 95
+1: 96
+2: 97
+3: 98
+4: 99
+5: 100
+6: 110
+7: 120
+8: 130
+9: 140
+10: 150
+11: 160
+12: 170
+13: 180
+14: 190
+15: 200
+16: 210
+17: 220
+18: 230
+19: 240
+20: 250
+Done!
+Try again sometime!
+
+
+
+
+
+
+
+NOTES:
+
+
+
+
+
+
+
+
+
+Header from the file copied/pasted below:
+
+
+Name:
+    CNT_1REP.py
+
+Version:
+    wessler
+    2024 November 8
+    update to: 2024 November 7
+    changes:
+        *cosmetic changes to be more consistent with other scripts
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *counts up but only allowing the repeating any non-zero digits ONE time.
+    *Ulee named this "counting by [I forget--I'll have to look up]" but we're calling it "counting by 1 repeats"
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *start_value
+            *max_value
+        Output:
+            0: 0
+            1: 1
+            2: 2
+            .
+            .
+            .
+            i: j
+
+            it ends when either i==max_number_of_numbers (hard-coded) or j>=max_value
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+
+it takes a long time to see the pattern for this, so I've included a starting value (like 90 or 990).
+due to laziness I just started the algorithm at 0 then run until it reaches the start value, at which time I start displaying

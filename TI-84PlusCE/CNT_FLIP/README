@@ -1,0 +1,79 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+
+To run:
+1. At prompt ===== then press Enter.
+2. 
+
+
+Example 1:
+
+
+
+
+Example 2:
+
+
+
+
+
+
+
+NOTES:
+
+
+
+
+
+
+
+
+
+Header from the file copied/pasted below:
+
+
+Name:
+    CNT_FLIP.py
+
+Version:
+    wessler
+    2024 November 8
+    update to: 2024 November 7
+    changes:
+        *cosmetic changes to be more consistent with other scripts
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *counts by 2^n, but first says the number then flips the last 2 digits of the number and says it again.
+    *Ulee named this "counting by [I forget--I'll have to look up]" but we're calling it "count by flip-the-end"
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *max_value
+        Output:
+            0: 0
+            1: 2
+            2: 4
+            .
+            .
+            .
+            i: j
+
+            it ends when either i==max_number_of_numbers (hard-coded) or j>=max_value
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+
+because this is exponential, it gets big very fast.
+
+this concept (switching the last 2 digits) can be used for other counting methods (other than 2^n), but Ulee did it with 2^n when making it up, so that's what this script is based on. Obviously, the algorithm can easily be repurposed for other counting methods.

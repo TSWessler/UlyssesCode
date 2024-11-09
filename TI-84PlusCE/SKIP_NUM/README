@@ -1,0 +1,77 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+
+To run:
+1. At prompt ===== then press Enter.
+2. 
+
+
+Example 1:
+
+
+
+
+Example 2:
+
+
+
+
+
+
+
+NOTES:
+
+
+
+
+
+
+
+
+
+Header from the file copied/pasted below:
+
+
+Name:
+    SKIP_NUM.py
+
+Version:
+    wessler
+    2024 November 8
+    update to: 2024 November 7
+    changes:
+        *cosmetic changes to be more consistent with other scripts
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *checks to see if a number is said if counting by some other number.
+        Ex: Is 7.5 said while counting by 1.5 starting at 0?
+            0,1.5,3,4.5,6,7.5--YES! 7.5 is said while counting by 1.5 starting at 0
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *skip_value
+            *start_value
+            *target_value
+        Output:
+            [either "YES!" or "NO :("]
+            You do say the number
+            [target_value]
+            while counting by
+            [skip_value]
+            starting at
+            [start_value]
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+

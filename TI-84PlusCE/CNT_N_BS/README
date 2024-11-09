@@ -1,0 +1,80 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+
+To run:
+1. At prompt ===== then press Enter.
+2. 
+
+
+Example 1:
+
+
+
+
+Example 2:
+
+
+
+
+
+
+
+NOTES:
+
+
+
+
+
+
+
+
+
+Header from the file copied/pasted below:
+
+
+Name:
+    CNT_N_BS.py
+
+Version:
+    wessler
+    2024 November 8
+    update to: 2024 November 7
+    changes:
+        *cosmetic changes to be more consistent with other scripts
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *counts "n-base" which Ulee made up (and I helped finalize rules), which is kind of backwards of counting in "base-n"
+    *Ex: 3-base skips all numbers with 3's, 2's, and 1's in them, so:
+        4,5,6,7,8,9,40,44,45,46,47,48,49,50,54,55,56,57,58,59,...
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *base_value
+            *max_value
+        Output:
+            0: 0
+            1: ???
+            2: ???
+            .
+            .
+            .
+            i: j
+
+            it ends when either i==max_number_of_numbers (hard-coded) or j>=max_value
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+
+*base can only be an integer between 0 and 8 (inclusive)
+*base 0 is regular counting
