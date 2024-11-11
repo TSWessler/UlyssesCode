@@ -3,11 +3,12 @@ Name:
     SKIP_NUM.py
 
 Version:
-    Kessler
+    wessler
     2024 November 10
     update to: 2024 November 8
     changes:
-        *prevent counting by 0's
+        *changed (a%b) == (c%d) to abs((a%b)-(c%d))<1e-15
+        *made sure can't try counting by 0's
 
 Description:
     *designed to run on Ulee's TI-84 Plus CE
@@ -53,23 +54,22 @@ NOTES:
 # =============================
 
 def say_number_or_no(start_val, skip_val, target_num):
-
-    if (target_num % skip_val) == (start_val % skip_val):
-        pass_check_mod=True
+    if abs((target_num % skip_val) - (start_val % skip_val)) < 1e-15:
+        pass_check_mod = True
     else:
-        pass_check_mod=False
+        pass_check_mod = False
 
-    if ((target_num>start_val) and (skip_val>0)) or ((target_num<start_val) and (skip_val<0)):
-        pass_check_IncDec=True
+    if ((target_num > start_val) and (skip_val > 0)) or ((target_num < start_val) and (skip_val < 0)):
+        pass_check_IncDec = True
     else:
-        pass_check_IncDec=False
+        pass_check_IncDec = False
 
     if pass_check_mod and pass_check_IncDec:
         print("\nYES!")
-	print("You do say the number ")
+        print("You do say the number ")
     else:
         print("\nNO :(")
-	print("You do NOT say the number ")
+        print("You do NOT say the number ")
     print(target_num)
     print("while counting by")
     print(skip_val)
@@ -92,8 +92,8 @@ while KeepTrying:
     print('\n\nEnter number counting by:')
     try:
         skip_value = float(input())
-        if skip_value==0:
-            print("\n(You can't count by 0's haha)\n")
+        if skip_value == 0:
+            print("\n\nSorry, can't count by 0's :(\n\n")
         else:
             KeepTrying = False
     except:

@@ -4,8 +4,10 @@ Name:
 
 Version:
     wessler
-    2024 November 8
-    1st version
+    2024 November 10
+    update to: 2024 November 8
+    changes:
+        *fixed error with displaying: "0: 0" which should be "0: 1"
 
 Description:
     *designed to run on Ulee's TI-84 Plus CE
@@ -53,7 +55,7 @@ def count_doubling(max_val, max_cnt_pause, max_num_of_nums):
     base_value = 2
     exponent = 0
 
-    display_number = 2 ** 0
+    display_number = base_value ** exponent
     print(str(number_of_numbers) + ":   " + str(display_number))
     input("Press Enter to continue...")
 

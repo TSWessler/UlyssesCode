@@ -1,17 +1,52 @@
 This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
 
+This is one of the primary programs for Ulee and his therapists/teachers.
+
+It counts from 0 to a max value by a given base for bases between 2 and 36 (inclusive). For bases greater than 10, letters of the alphabet are used in order. That is, the order of digits is 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z.
+
+Ex. Base-11 is: 0,1,2,3,4,5,6,7,8,9,A,10,11,12,13,14,15,16,17,18,19,1A,20,...,98,99,9A,A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,AA,100,101,...
+
+Eventually, it'd be nice to write out numbers phonetically since that is part of the joy Ulee gets from this: for bases greater than 10, he likes to say A-teen, B-teen, C-teen, etc., and D-ty one, D-ty two, D-ty three, etc.
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
+Ex:
+0: val_{0}
+1: val_{1}
+2: val_{2}
+3: val_{3}
+.
+.
+.
+n: val_{n}
+
+And terminates when n exceeds some hard-coded value or val_{n} exceeds an input value.
+
 
 To run:
-1. At prompt ===== then press Enter.
-2. 
+1. At prompt "Enter base value:" enter the value counting will start at then press Enter.
+2. At prompt "Enter max value:" enter the max value to count to then press Enter.
+3. Press Enter when prompted.
 
 
 Example 1:
 
+Enter base value:
+2
+Enter max value:
+1000
 
-
-
-Example 2:
+0: 0
+1: 1
+2: 10
+3: 11
+4: 100
+5: 101
+6: 110
+7: 111
+8: 1000
+Done!
+Try again sometime!
 
 
 

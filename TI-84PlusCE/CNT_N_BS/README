@@ -1,17 +1,49 @@
 This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
 
+This is a counting that Ulee made up (and I helped finalize the rules for). In counting by base-n, I said that we don't say the number n or any numbers above it. Ex. In base-3 we don't say 3 or any digits above it, so 0,1,2,10,11,12,20,21,22,100,101,...
+
+In n-base, we don't say the number n or any numbers below it (except 0). Ex. 3-base is: 4,5,6,7,8,9,40,44,45,46,47,48,49,50,54,...
+
+Notice that 0-base is regular counting and 8-base is the highest we can do (in a regular base-10 system).
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
+Ex:
+0: val_{0}
+1: val_{1}
+2: val_{2}
+3: val_{3}
+.
+.
+.
+n: val_{n}
+
+And terminates when n exceeds some hard-coded value or val_{n} exceeds an input value.
+
 
 To run:
-1. At prompt ===== then press Enter.
-2. 
+1. At prompt "Enter base value:" enter the value counting will start at then press Enter.
+2. At prompt "Enter max value:" enter the max value to count to then press Enter.
+3. Press Enter when prompted.
 
 
 Example 1:
 
+Enter base value:
+8
+Enter max value:
+1000
 
-
-
-Example 2:
+0: 0
+1: 9
+2: 90
+3: 99
+4. 900
+5: 909
+6: 990
+7: 999
+Done!
+Try again sometime!
 
 
 

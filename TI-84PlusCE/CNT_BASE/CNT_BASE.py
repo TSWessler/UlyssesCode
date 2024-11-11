@@ -240,6 +240,7 @@ while KeepTrying:
     except:
         print('\n(Sorry, must be a number)\n')
 
+KeepTrying = True
 while KeepTrying:
     print('\n\nEnter max value to count to:')
     try:

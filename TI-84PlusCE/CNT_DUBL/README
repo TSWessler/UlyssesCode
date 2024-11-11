@@ -1,17 +1,45 @@
 This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
 
+This is the first program that Ulee asked me to write after trying out the programs I initially put on his calculator. It is simple: it just displays 2^n for all n=0,1,2,... until 2^n >= some max value that was input.
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
+Ex:
+0: 1
+1: 2
+2: 4
+3: 8
+.
+.
+.
+n: 2^n
+
+And terminates when n exceeds some hard-coded value or 2^n exceeds an input value.
+
 
 To run:
-1. At prompt ===== then press Enter.
-2. 
+1. At prompt "Enter max value:" enter the value counting will start at then press Enter.
+2. Press Enter when prompted.
 
 
 Example 1:
 
+Enter max value:
+1000
 
-
-
-Example 2:
+0: 1
+1: 2
+2: 4
+3: 8
+4: 16
+5: 32
+6: 64
+7: 128
+8: 256
+9: 512
+10: 1024
+Done!
+Try again sometime!
 
 
 
@@ -37,8 +65,10 @@ Name:
 
 Version:
     wessler
-    2024 November 8
-    1st version
+    2024 November 10
+    update to: 2024 November 8
+    changes:
+        *fixed error with displaying: "0: 0" which should be "0: 1"
 
 Description:
     *designed to run on Ulee's TI-84 Plus CE

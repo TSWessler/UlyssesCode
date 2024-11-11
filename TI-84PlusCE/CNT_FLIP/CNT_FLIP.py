@@ -4,10 +4,10 @@ Name:
 
 Version:
     wessler
-    2024 November 8
-    update to: 2024 November 7
+    2024 November 10
+    update to: 2024 November 8
     changes:
-        *cosmetic changes to be more consistent with other scripts
+        *fixed error with displaying: "0: 0" which should be "0: 1"
 
 Description:
     *designed to run on Ulee's TI-84 Plus CE
@@ -43,7 +43,7 @@ NOTES:
 
 because this is exponential, it gets big very fast.
 
-this concept (switching the last 2 digits) can be used for other counting methods (other than 2^n), but Ulee did it with 2^n when making it up, so that's what this script is based on. Obviously, the algorithm can easily be repurposed for other counting methods.
+this pattern (switching the last 2 digits) can be used for other counting methods (other than 2^n), but Ulee did it with 2^n when making it up, so that's what this script is based on. Obviously, the algorithm can easily be repurposed for other counting methods.
 
 '''
 
@@ -59,7 +59,7 @@ def count_by_flip_the_end(max_val, max_cnt_pause, max_num_of_nums):
     base_value = 2
     exponent = 0
 
-    display_number = 0
+    display_number = base_value ** exponent
     print(str(number_of_numbers) + ":   " + str(display_number))
     input("Press Enter to continue...")
 

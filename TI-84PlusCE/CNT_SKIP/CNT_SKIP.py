@@ -4,14 +4,14 @@ Name:
 
 Version:
     wessler
-    2024 November 8
-    update to: 2024 October 18
+    2024 November 10
+    update to: 2024 November 8
     changes:
-        *cosmetic changes to be more consistent with other scripts
+        *didn't change this script to make inputting more robust
 
 Description:
     *designed to run on Ulee's TI-84 Plus CE
-    *counts from "start_value" until reaching (at least) "max_value" while skipping "skip_value"-1 numbers inbetween
+    *counts from "start_value" until reaching (at least) "max_value" by repeatedly increasing by a value of "skip_value"
     *e.g.: start_value = 0; max_value = 15; skip_value = 2;
         goes: 0, 2, 4, 6, 8, 10, 12, 14, 16
 
@@ -31,9 +31,9 @@ Outputs/does:
             .
             .
             .
-            i: j*skip_value+start_value
+            i: i*skip_value+start_value
 
-            it ends when either i==max_number_of_numbers (hard-coded) or j*skip_value+start_value>=max_value
+            it ends when either i==max_number_of_numbers (hard-coded) or i*skip_value+start_value>=max_value
 
 Used by:
     *NOTHING--this is standalone code
@@ -43,7 +43,7 @@ Uses:
 
 NOTES:
 
-for floating-point addition reasons can mess up after a while
+floating-point arithmetic causes approximation errors
 
 '''
 
@@ -119,27 +119,37 @@ max_value = None
 KeepTrying = True
 while KeepTrying:
     print('\n\nEnter value to count by:')
-    skip_value = float(input())
-    if skip_value == 0:
-        print("\n\nSorry, can't count by 0's :(\n\n")
-    elif skip_value < 0:
-        print("\n\nSorry, can't count by negative numbers :(\n\n")
-    elif skip_value > 0:
-        break
+    try:
+        skip_value = float(input())
+        if skip_value == 0:
+            print("\n\nSorry, can't count by 0's :(\n\n")
+        elif skip_value < 0:
+            print("\n\nSorry, can't count by negative numbers :(\n\n")
+        else:
+            KeepTrying = False
+    except:
+        print('\n(Must be a number)\n')
 
+KeepTrying = True
 while KeepTrying:
     print('\n\nEnter value to start at:')
-    start_value = round(float(input()))
-    if (start_value < 0) or (start_value >= 0):
-        break
+    try:
+        start_value = float(input())
+        KeepTrying = False
+    except:
+        print('\n(Must be a number)\n')
 
+KeepTrying = True
 while KeepTrying:
     print('\n\nEnter max value to count to:')
-    max_value = round(float(input()))
-    if (max_value <= start_value):
-        print('\n\nChoose a number greater than "Start Value"\n\n')
-    if (max_value > start_value):
-        break
+    try:
+        max_value = float(input())
+        if (max_value <= start_value):
+            print('\n\nChoose a number greater than "Start Value"\n\n')
+        else:
+            KeepTrying = False
+    except:
+        print('\n(Must be a number)\n')
 
 print('\n\n')
 

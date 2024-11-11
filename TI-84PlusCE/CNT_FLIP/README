@@ -1,17 +1,53 @@
 This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
 
+This is a pattern of counting that Ulee made up very early. The pattern is count 2^n, but after saying the regular 2^n value you swap the digits in the ones and tens places.
+
+Ex. 1,2,4,8,16,61,32,23,64,46,128,182,...
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
+Ex:
+0: val_{0}
+1: val_{1}
+2: val_{2}
+3: val_{3}
+.
+.
+.
+n: val_{n}
+
+And terminates when n exceeds some hard-coded value or val_{n} exceeds an input value.
+
 
 To run:
-1. At prompt ===== then press Enter.
-2. 
+1. At prompt "Enter max value:" enter the value counting will start at then press Enter.
+2. Press Enter when prompted.
 
 
 Example 1:
 
+Enter max value:
+1000
 
-
-
-Example 2:
+0: 1
+1: 2
+2: 4
+3: 8
+4: 16
+5: 61
+6: 32
+7: 23
+8: 64
+9: 46
+10: 128
+11: 182
+12: 256
+13: 265
+14: 512
+15: 521
+16: 1024
+Done!
+Try again sometime!
 
 
 
@@ -37,10 +73,10 @@ Name:
 
 Version:
     wessler
-    2024 November 8
-    update to: 2024 November 7
+    2024 November 10
+    update to: 2024 November 8
     changes:
-        *cosmetic changes to be more consistent with other scripts
+        *fixed error with displaying: "0: 0" which should be "0: 1"
 
 Description:
     *designed to run on Ulee's TI-84 Plus CE
@@ -76,4 +112,5 @@ NOTES:
 
 because this is exponential, it gets big very fast.
 
-this concept (switching the last 2 digits) can be used for other counting methods (other than 2^n), but Ulee did it with 2^n when making it up, so that's what this script is based on. Obviously, the algorithm can easily be repurposed for other counting methods.
+this pattern (switching the last 2 digits) can be used for other counting methods (other than 2^n), but Ulee did it with 2^n when making it up, so that's what this script is based on. Obviously, the algorithm can easily be repurposed for other counting methods.
+

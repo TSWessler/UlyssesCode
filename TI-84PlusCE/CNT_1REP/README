@@ -9,6 +9,7 @@ Ex: 0, 1, 2, 3, ..., 98, 99, 100, 110, 120, 130, ..., 980, 990, 1000, 1100, 1200
 
 The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
 Ex:
+0: val_{0}
 1: val_{1}
 2: val_{2}
 3: val_{3}
@@ -32,6 +33,7 @@ Enter start value:
 95
 Enter max value:
 249
+
 0: 95
 1: 96
 2: 97

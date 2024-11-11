@@ -109,7 +109,7 @@ max_value = None
 
 KeepTrying = True
 while KeepTrying:
-    print('\n\nEnter base:')
+    print('\n\nEnter base value:')
     try:
         float_val = float(input())
         if float_val < 0:
