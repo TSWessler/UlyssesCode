@@ -3,11 +3,11 @@ Name:
     SKIP_NUM.py
 
 Version:
-    wessler
-    2024 November 8
-    update to: 2024 November 7
+    Kessler
+    2024 November 10
+    update to: 2024 November 8
     changes:
-        *cosmetic changes to be more consistent with other scripts
+        *prevent counting by 0's
 
 Description:
     *designed to run on Ulee's TI-84 Plus CE
@@ -66,9 +66,10 @@ def say_number_or_no(start_val, skip_val, target_num):
 
     if pass_check_mod and pass_check_IncDec:
         print("\nYES!")
+	print("You do say the number ")
     else:
         print("\nNO :(")
-    print("You do say the number ")
+	print("You do NOT say the number ")
     print(target_num)
     print("while counting by")
     print(skip_val)
@@ -91,7 +92,10 @@ while KeepTrying:
     print('\n\nEnter number counting by:')
     try:
         skip_value = float(input())
-        KeepTrying = False
+        if skip_value==0:
+            print("\n(You can't count by 0's haha)\n")
+        else:
+            KeepTrying = False
     except:
         print('\n(Must be a number)\n')
 
