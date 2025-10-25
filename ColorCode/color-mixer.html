@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Color Mixer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .input-group input, .input-group select {
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .input-group input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .input-group select {
+            min-width: 150px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .result h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .color-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .color-swatch {
+            width: 150px;
+            height: 150px;
+            border-radius: 15px;
+            border: 3px solid #dee2e6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .color-info p {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #495057;
+        }
+
+        .color-info strong {
+            color: #333;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid #dc3545;
+        }
+
+        .reference {
+            margin-top: 20px;
+            padding: 20px;
+            background: #e7f3ff;
+            border-radius: 10px;
+            border: 2px solid #0066cc;
+        }
+
+        .reference h3 {
+            color: #0066cc;
+            margin-bottom: 15px;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .color-card {
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+
+        .color-card h4 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .color-card p {
+            color: #666;
+            font-size: 0.95em;
+            margin: 5px 0;
+        }
+
+        .color-card-swatch {
+            width: 100%;
+            height: 60px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border: 2px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Paint Color Mixer</h1>
+        <p class="subtitle">Mix and subtract colors using traditional paint (RYB) color theory</p>
+
+        <!-- Color Addition Section -->
+        <div class="section">
+            <h2>Add/Mix Colors</h2>
+            <div class="input-group">
+                <input type="text" id="addInput" placeholder="e.g., Blue + Red or 2 Blue + 1 Violet" />
+                <button onclick="addColors()">Mix</button>
+            </div>
+            <div id="addResult"></div>
+        </div>
+
+        <!-- Color Subtraction Section -->
+        <div class="section">
+            <h2>Subtract Colors</h2>
+            <div class="input-group">
+                <input type="text" id="subtractInput" placeholder="e.g., Violet - Blue or Purple - 2 Blue" />
+                <button onclick="subtractColors()">Subtract</button>
+            </div>
+            <div id="subtractResult"></div>
+        </div>
+
+        <!-- Color Lookup Section -->
+        <div class="section">
+            <h2>Color Lookup</h2>
+            <div class="input-group">
+                <input type="text" id="lookupInput" placeholder="e.g., Purple or [3,1,0]" />
+                <button onclick="lookupColor()">Find Color</button>
+            </div>
+            <div id="lookupResult"></div>
+        </div>
+
+        <!-- Color Reference -->
+        <div class="reference">
+            <h3>Color Reference Guide</h3>
+            <div id="colorReference"></div>
+        </div>
+    </div>
+
+    <script>
+        // Color System Database
+        const colorSystem = {
+            // Primary colors (3)
+            'Blue': [1, 0, 0],
+            'Red': [0, 1, 0],
+            'Yellow': [0, 0, 1],
+
+            // Secondary colors (3)
+            'Purple': [1, 1, 0],
+            'Orange': [0, 1, 1],
+            'Green': [1, 0, 1],
+
+            // Tertiary colors (6)
+            'Violet': [3, 1, 0],
+            'Crimson': [1, 3, 0],
+            'Vermilion': [0, 3, 1],
+            'Amber': [0, 1, 3],
+            'Chartreuse': [1, 0, 3],
+            'Teal': [3, 0, 1],
+
+            // Quaternary colors (12)
+            'Ultramarine': [4, 1, 0],
+            'Indigo': [2, 1, 0],
+            'Magenta': [1, 2, 0],
+            'Rose': [1, 4, 0],
+            'Carmine': [0, 4, 1],
+            'Scarlet': [0, 2, 1],
+            'Tangerine': [0, 1, 2],
+            'Gold': [0, 1, 4],
+            'Canary': [1, 0, 4],
+            'Lime': [1, 0, 2],
+            'Turquoise': [2, 0, 1],
+            'Azure': [4, 0, 1],
+
+            // Quinary colors (24 - selection of common ones)
+            'Sapphire': [5, 1, 0],
+            'Navy': [5, 0, 1],
+            'Cobalt': [3, 2, 0],
+            'Orchid': [2, 3, 0],
+            'Fuchsia': [1, 5, 0],
+            'Ruby': [0, 5, 1],
+            'Coral': [0, 3, 2],
+            'Peach': [0, 2, 3],
+            'Marigold': [0, 1, 5],
+            'Lemon': [2, 0, 5],
+            'Mint': [3, 0, 2],
+            'Jade': [2, 0, 3],
+            'Cyan': [5, 0, 1],
+            'Cerulean': [3, 1, 1]
+        };
+
+        // Get the level of a color
+        function getColorLevel(coords) {
+            const sum = coords.reduce((a, b) => a + b, 0);
+            if (sum === 1) return 'Primary';
+            if (sum === 2) return 'Secondary';
+            if (sum === 4) return 'Tertiary';
+            if (sum === 5) return 'Quaternary';
+            if (sum === 6) return 'Quinary';
+            return 'Complex';
+        }
+
+        // Parse color input (handles "Blue", "2 Blue", "[1,0,0]", etc.)
+        function parseColorExpression(expr) {
+            expr = expr.trim();
+
+            // Check if it's coordinate form [B,R,Y]
+            const coordMatch = expr.match(/\[(\d+\.?\d*),\s*(\d+\.?\d*),\s*(\d+\.?\d*)\]/);
+            if (coordMatch) {
+                return [parseFloat(coordMatch[1]), parseFloat(coordMatch[2]), parseFloat(coordMatch[3])];
+            }
+
+            // Check if it's a number followed by a color name
+            const multiplierMatch = expr.match(/^(\d+\.?\d*)\s+(.+)$/);
+            if (multiplierMatch) {
+                const multiplier = parseFloat(multiplierMatch[1]);
+                const colorName = multiplierMatch[2].trim();
+                const baseColor = findColorByName(colorName);
+                if (baseColor) {
+                    return baseColor.map(c => c * multiplier);
+                }
+            }
+
+            // Just a color name
+            const color = findColorByName(expr);
+            if (color) {
+                return color;
+            }
+
+            return null;
+        }
+
+        // Find color by name (case-insensitive)
+        function findColorByName(name) {
+            name = name.trim();
+            for (let colorName in colorSystem) {
+                if (colorName.toLowerCase() === name.toLowerCase()) {
+                    return [...colorSystem[colorName]];
+                }
+            }
+            return null;
+        }
+
+        // Simplify color coordinates to smallest integer ratio
+        function simplifyCoords(coords) {
+            // Find GCD of all components
+            function gcd(a, b) {
+                a = Math.abs(a);
+                b = Math.abs(b);
+                while (b > 0) {
+                    let temp = b;
+                    b = a % b;
+                    a = temp;
+                }
+                return a;
+            }
+
+            // Convert to integers by finding common denominator
+            const precision = 1000000;
+            let intCoords = coords.map(c => Math.round(c * precision));
+
+            // Find GCD of all coordinates
+            let divisor = intCoords.reduce((a, b) => gcd(a, b));
+            if (divisor === 0) divisor = 1;
+
+            intCoords = intCoords.map(c => c / divisor);
+
+            // Scale down to reasonable integers
+            const maxVal = Math.max(...intCoords);
+            if (maxVal > 100) {
+                const scale = 100 / maxVal;
+                intCoords = intCoords.map(c => Math.round(c * scale));
+            }
+
+            // Final GCD simplification
+            divisor = intCoords.reduce((a, b) => gcd(a, b));
+            if (divisor === 0) divisor = 1;
+
+            return intCoords.map(c => Math.round(c / divisor));
+        }
+
+        // Add colors together
+        function addColors() {
+            const input = document.getElementById('addInput').value;
+            const resultDiv = document.getElementById('addResult');
+
+            try {
+                // Split by + sign
+                const parts = input.split('+').map(s => s.trim());
+
+                if (parts.length < 2) {
+                    throw new Error('Please add at least two colors (e.g., Blue + Red)');
+                }
+
+                // Parse each part and add them up
+                let result = [0, 0, 0];
+                let terms = [];
+
+                for (let part of parts) {
+                    const color = parseColorExpression(part);
+                    if (!color) {
+                        throw new Error(`Could not parse: ${part}`);
+                    }
+                    terms.push(part);
+                    result = [result[0] + color[0], result[1] + color[1], result[2] + color[2]];
+                }
+
+                // Simplify to smallest ratio
+                result = simplifyCoords(result);
+
+                // Find the color name
+                const colorInfo = identifyColor(result);
+
+                // Display result
+                displayColorResult(resultDiv, result, colorInfo, `${terms.join(' + ')} =`);
+
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">${error.message}</div>`;
+            }
+        }
+
+        // Subtract colors
+        function subtractColors() {
+            const input = document.getElementById('subtractInput').value;
+            const resultDiv = document.getElementById('subtractResult');
+
+            try {
+                // Split by - sign (only the first one)
+                const parts = input.split('-');
+
+                if (parts.length !== 2) {
+                    throw new Error('Please use format: Color1 - Color2');
+                }
+
+                const color1 = parseColorExpression(parts[0].trim());
+                const color2 = parseColorExpression(parts[1].trim());
+
+                if (!color1 || !color2) {
+                    throw new Error('Could not parse color expression');
+                }
+
+                // Perform subtraction with validation
+                const result = performSubtraction(color1, color2);
+
+                if (result === null) {
+                    throw new Error('Subtraction not possible - insufficient color component');
+                }
+
+                // Find the color name
+                const colorInfo = identifyColor(result);
+
+                // Display result
+                displayColorResult(resultDiv, result, colorInfo, `${parts[0].trim()} - ${parts[1].trim()} =`);
+
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">${error.message}</div>`;
+            }
+        }
+
+        // Perform subtraction with m% validation
+        function performSubtraction(color1, color2) {
+            // Step 1: Count total parts
+            const totalParts = color2.reduce((a, b) => a + b, 0) + color1.reduce((a, b) => a + b, 0);
+
+            // Step 2: Scale color1 by total parts
+            const sum1 = color1.reduce((a, b) => a + b, 0);
+            const scaledColor1 = color1.map(c => c * totalParts / sum1);
+
+            // Step 3: Calculate m% for each component
+            // Step 4: Check if subtraction is well-posed
+            for (let i = 0; i < 3; i++) {
+                if (color2[i] > 0) {
+                    const mPercent = color2[i] / (color2.reduce((a, b) => a + b, 0) + color1.reduce((a, b) => a + b, 0));
+                    const component1Percent = scaledColor1[i] / scaledColor1.reduce((a, b) => a + b, 0);
+
+                    if (component1Percent < mPercent - 0.0001) {
+                        return null; // Not enough of this component
+                    }
+                }
+            }
+
+            // Step 5: Perform the subtraction
+            const sum2 = color2.reduce((a, b) => a + b, 0);
+            const scaledColor2 = color2.map(c => c * totalParts / sum2);
+
+            const result = [
+                scaledColor1[0] - scaledColor2[0],
+                scaledColor1[1] - scaledColor2[1],
+                scaledColor1[2] - scaledColor2[2]
+            ];
+
+            // Check for negative values (shouldn't happen if validation worked)
+            if (result.some(c => c < -0.0001)) {
+                return null;
+            }
+
+            // Ensure non-negative
+            const finalResult = result.map(c => Math.max(0, c));
+
+            // Step 6: Simplify
+            return simplifyCoords(finalResult);
+        }
+
+        // Identify color (exact match or closest)
+        function identifyColor(coords) {
+            // Try exact match first
+            for (let name in colorSystem) {
+                const color = colorSystem[name];
+                const simplified = simplifyCoords(color);
+                if (simplified[0] === coords[0] && simplified[1] === coords[1] && simplified[2] === coords[2]) {
+                    return {
+                        name: name,
+                        exact: true,
+                        level: getColorLevel(simplified)
+                    };
+                }
+            }
+
+            // Find closest match
+            let minDistance = Infinity;
+            let closestName = '';
+
+            // Normalize coords for comparison
+            const sum = coords.reduce((a, b) => a + b, 0);
+            const normalized = sum > 0 ? coords.map(c => c / sum) : coords;
+
+            for (let name in colorSystem) {
+                const color = colorSystem[name];
+                const colorSum = color.reduce((a, b) => a + b, 0);
+                const colorNorm = color.map(c => c / colorSum);
+
+                const distance = Math.sqrt(
+                    Math.pow(normalized[0] - colorNorm[0], 2) +
+                    Math.pow(normalized[1] - colorNorm[1], 2) +
+                    Math.pow(normalized[2] - colorNorm[2], 2)
+                );
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestName = name;
+                }
+            }
+
+            return {
+                name: closestName,
+                exact: false,
+                level: getColorLevel(coords)
+            };
+        }
+
+        // Lookup a color
+        function lookupColor() {
+            const input = document.getElementById('lookupInput').value;
+            const resultDiv = document.getElementById('lookupResult');
+
+            try {
+                const color = parseColorExpression(input);
+
+                if (!color) {
+                    throw new Error('Could not parse color expression');
+                }
+
+                const simplified = simplifyCoords(color);
+                const colorInfo = identifyColor(simplified);
+
+                displayColorResult(resultDiv, simplified, colorInfo, 'Color Information:');
+
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">${error.message}</div>`;
+            }
+        }
+
+        // Convert RYB to RGB for display
+        function rybToRgb(ryb) {
+            // Normalize
+            const sum = ryb[2] + ryb[0] + ryb[1]; // B, R, Y
+            if (sum === 0) return [255, 255, 255]; // White
+
+            const b = ryb[0] / sum;
+            const r = ryb[1] / sum;
+            const y = ryb[2] / sum;
+
+            // Cube corners in RGB space
+            const white = [1, 1, 1];
+            const blue = [0, 0, 1];
+            const yellow = [1, 1, 0];
+            const green = [0, 1, 0];
+            const red = [1, 0, 0];
+            const purple = [0.5, 0, 0.5];
+            const orange = [1, 0.5, 0];
+            const brown = [0.4, 0.2, 0];
+
+            // Trilinear interpolation
+            const rgb = [
+                white[0] * (1-r) * (1-y) * (1-b) +
+                blue[0] * (1-r) * (1-y) * (b) +
+                yellow[0] * (1-r) * (y) * (1-b) +
+                green[0] * (1-r) * (y) * (b) +
+                red[0] * (r) * (1-y) * (1-b) +
+                purple[0] * (r) * (1-y) * (b) +
+                orange[0] * (r) * (y) * (1-b) +
+                brown[0] * (r) * (y) * (b),
+
+                white[1] * (1-r) * (1-y) * (1-b) +
+                blue[1] * (1-r) * (1-y) * (b) +
+                yellow[1] * (1-r) * (y) * (1-b) +
+                green[1] * (1-r) * (y) * (b) +
+                red[1] * (r) * (1-y) * (1-b) +
+                purple[1] * (r) * (1-y) * (b) +
+                orange[1] * (r) * (y) * (1-b) +
+                brown[1] * (r) * (y) * (b),
+
+                white[2] * (1-r) * (1-y) * (1-b) +
+                blue[2] * (1-r) * (1-y) * (b) +
+                yellow[2] * (1-r) * (y) * (1-b) +
+                green[2] * (1-r) * (y) * (b) +
+                red[2] * (r) * (1-y) * (1-b) +
+                purple[2] * (r) * (1-y) * (b) +
+                orange[2] * (r) * (y) * (1-b) +
+                brown[2] * (r) * (y) * (b)
+            ];
+
+            return rgb.map(c => Math.round(Math.max(0, Math.min(255, c * 255))));
+        }
+
+        // Display color result
+        function displayColorResult(container, coords, colorInfo, prefix) {
+            const rgb = rybToRgb(coords);
+            const rgbString = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+
+            const exactText = colorInfo.exact ? colorInfo.name : `Shade of ${colorInfo.name}`;
+
+            container.innerHTML = `
+                <div class="result">
+                    <h3>${prefix}</h3>
+                    <div class="color-display">
+                        <div class="color-swatch" style="background-color: ${rgbString};"></div>
+                        <div class="color-info">
+                            <p><strong>Name:</strong> ${exactText}</p>
+                            <p><strong>Level:</strong> ${colorInfo.level}</p>
+                            <p><strong>Coordinate Form:</strong> [${coords[0]}, ${coords[1]}, ${coords[2]}] (Blue, Red, Yellow)</p>
+                            <p><strong>RGB Approximation:</strong> ${rgbString}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize color reference
+        function initColorReference() {
+            const container = document.getElementById('colorReference');
+
+            const levels = {
+                'Primary Colors': [],
+                'Secondary Colors': [],
+                'Tertiary Colors': [],
+                'Quaternary Colors': [],
+                'Quinary Colors': []
+            };
+
+            for (let name in colorSystem) {
+                const coords = colorSystem[name];
+                const level = getColorLevel(coords);
+                const levelKey = level + ' Colors';
+
+                if (levels[levelKey]) {
+                    levels[levelKey].push({name, coords});
+                }
+            }
+
+            let html = '';
+            for (let level in levels) {
+                if (levels[level].length > 0) {
+                    html += `<h4 style="margin-top: 20px; color: #495057;">${level}</h4>`;
+                    html += '<div class="color-grid">';
+
+                    for (let color of levels[level]) {
+                        const rgb = rybToRgb(color.coords);
+                        const rgbString = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+
+                        html += `
+                            <div class="color-card">
+                                <h4>${color.name}</h4>
+                                <p>[${color.coords[0]}, ${color.coords[1]}, ${color.coords[2]}]</p>
+                                <div class="color-card-swatch" style="background-color: ${rgbString};"></div>
+                            </div>
+                        `;
+                    }
+
+                    html += '</div>';
+                }
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initColorReference();
+        };
+    </script>
+</body>
+</html>
