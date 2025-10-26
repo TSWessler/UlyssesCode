@@ -30,31 +30,20 @@
         header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 30px;
+            padding: 20px;
             text-align: center;
         }
 
         header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2em;
+            margin-bottom: 5px;
         }
 
         header h2 {
-            font-size: 1.3em;
-            margin-bottom: 15px;
+            font-size: 1.1em;
+            margin-bottom: 0;
             font-weight: normal;
             opacity: 0.95;
-        }
-
-        header p {
-            font-size: 1em;
-            opacity: 0.95;
-            line-height: 1.6;
-            margin-bottom: 10px;
-            text-align: left;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         .main-content {
@@ -75,6 +64,18 @@
             color: #667eea;
             margin-bottom: 15px;
             font-size: 1.5em;
+        }
+
+        .section h3 {
+            color: #667eea;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .section p {
+            margin-bottom: 10px;
+            line-height: 1.6;
         }
 
         .input-group {
@@ -294,10 +295,7 @@
     <div class="container">
         <header>
             <h1>Paint Color Mixer</h1>
-            <h2>A Tool For Answering Ulysses's Questions!</h2>
-            <p>Think of this webpage as the palette that you mix colors on and the calculator tells you what you colors you get out afterward. Example 1: Green + Chartreuse = Lime (since this entry assumes that Green and Chartreuse are mixed in equal proportions); Example 2: 3 Blue + Red = Violet = Blue + Blue + Blue + Red; Example 3: 2 Orange + Blue = Brown</p>
-            <p>This tool also allows for "un-mixing"—this is the OPPOSITE of mixing: Example 1: Blue + Red = Purple SO… Purple - Blue = Red; Example 2: Violet - Blue = Purple; Example 3: Violet - Red = IMPOSSIBLE (since what + red = Violet? There is no such color! The question implies equal parts BLANK + Red = Violet.)</p>
-            <p><strong>Other features:</strong> The calculator supports "names" of colors along with coordinates, so [0,0,1]+[1,0,0] is equivalent to Blue + Red. Also, to look up a color, you can treat it as adding a color to nothing, so simply typing Brown will pop up info on brown.</p>
+            <h2>RYB Color Theory Calculator</h2>
         </header>
 
         <div class="main-content">
@@ -325,6 +323,29 @@
             <div class="section reference">
                 <h2>Color Reference Guide</h2>
                 <div id="colorReference"></div>
+            </div>
+
+            <div class="section reference">
+                <h2>How to Use This Tool</h2>
+                <div>
+                    <p>Think of this webpage as the palette that you mix colors on and the calculator tells you what colors you get out afterward.</p>
+
+                    <h3>Mixing Colors</h3>
+                    <p><strong>Example 1:</strong> Green + Chartreuse = Lime (assumes equal proportions)</p>
+                    <p><strong>Example 2:</strong> 3 Blue + Red = Violet = Blue + Blue + Blue + Red</p>
+                    <p><strong>Example 3:</strong> 2 Orange + Blue = Brown</p>
+
+                    <h3>Un-Mixing Colors</h3>
+                    <p>This tool also allows for "un-mixing"—this is the OPPOSITE of mixing:</p>
+                    <p><strong>Example 1:</strong> Blue + Red = Purple, SO… Purple - Blue = Red</p>
+                    <p><strong>Example 2:</strong> Violet - Blue = Purple</p>
+                    <p><strong>Example 3:</strong> Violet - Red = IMPOSSIBLE (since what + red = Violet? There is no such color! The question implies equal parts BLANK + Red = Violet.)</p>
+
+                    <h3>Other Features</h3>
+                    <p>• The calculator supports "names" of colors along with coordinates, so [0,0,1]+[1,0,0] is equivalent to Blue + Red.</p>
+                    <p>• To look up a color, simply type its name or coordinates (e.g., "Brown" or "[1,1,1]").</p>
+                    <p>• Click any color in the reference guide to see its details.</p>
+                </div>
             </div>
         </div>
     </div>
