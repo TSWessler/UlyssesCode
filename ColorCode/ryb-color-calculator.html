@@ -270,12 +270,12 @@
                 <div class="help-text">
                     <strong>Examples:</strong>
                     Purple<br>
-                    [3,1,0] or 3,1,0<br>
-                    [1B, 1R, 0Y]
+                    [1,0,1] or 1,0,1<br>
+                    [1R, 0Y, 1B]
                 </div>
                 <div class="input-group">
-                    <label for="lookupInput">Enter color name or coordinates:</label>
-                    <input type="text" id="lookupInput" placeholder="e.g., Purple or [1,1,0]">
+                    <label for="lookupInput">Enter color name or coordinates [R,Y,B]:</label>
+                    <input type="text" id="lookupInput" placeholder="e.g., Purple or [1,0,1]">
                 </div>
                 <div class="button-group">
                     <button onclick="lookupColor()">Lookup</button>
@@ -292,79 +292,76 @@
     </div>
 
     <script>
-        // Define the complete color system
+        // Define the complete color system (Wikipedia RYB standard)
         const colors = {
             // Primary (3)
-            'Blue': { b: 1, r: 0, y: 0, level: 'Primary' },
-            'Red': { b: 0, r: 1, y: 0, level: 'Primary' },
-            'Yellow': { b: 0, r: 0, y: 1, level: 'Primary' },
+            'Red': { r: 1, y: 0, b: 0, level: 'Primary' },
+            'Yellow': { r: 0, y: 1, b: 0, level: 'Primary' },
+            'Blue': { r: 0, y: 0, b: 1, level: 'Primary' },
 
             // Secondary (3)
-            'Purple': { b: 1, r: 1, y: 0, level: 'Secondary' },
-            'Orange': { b: 0, r: 1, y: 1, level: 'Secondary' },
-            'Green': { b: 1, r: 0, y: 1, level: 'Secondary' },
+            'Orange': { r: 1, y: 1, b: 0, level: 'Secondary' },
+            'Green': { r: 0, y: 1, b: 1, level: 'Secondary' },
+            'Purple': { r: 1, y: 0, b: 1, level: 'Secondary' },
 
-            // Tertiary (6)
-            'Violet': { b: 3, r: 1, y: 0, level: 'Tertiary' },
-            'Crimson': { b: 1, r: 3, y: 0, level: 'Tertiary' },
-            'Vermilion': { b: 0, r: 3, y: 1, level: 'Tertiary' },
-            'Amber': { b: 0, r: 1, y: 3, level: 'Tertiary' },
-            'Chartreuse': { b: 1, r: 0, y: 3, level: 'Tertiary' },
-            'Teal': { b: 3, r: 0, y: 1, level: 'Tertiary' },
+            // Tertiary (6) - Wikipedia standard
+            'Vermilion': { r: 3, y: 1, b: 0, level: 'Tertiary' },
+            'Amber': { r: 1, y: 3, b: 0, level: 'Tertiary' },
+            'Chartreuse': { r: 0, y: 3, b: 1, level: 'Tertiary' },
+            'Teal': { r: 0, y: 1, b: 3, level: 'Tertiary' },
+            'Violet': { r: 1, y: 0, b: 3, level: 'Tertiary' },
+            'Magenta': { r: 3, y: 0, b: 1, level: 'Tertiary' },
 
-            // Quaternary (12)
-            'Ultramarine': { b: 7, r: 1, y: 0, level: 'Quaternary' },
-            'Indigo': { b: 5, r: 3, y: 0, level: 'Quaternary' },
-            'Magenta': { b: 3, r: 5, y: 0, level: 'Quaternary' },
-            'Rose': { b: 1, r: 7, y: 0, level: 'Quaternary' },
-            'Scarlet': { b: 0, r: 7, y: 1, level: 'Quaternary' },
-            'RedOrange': { b: 0, r: 5, y: 3, level: 'Quaternary' },
-            'Tangerine': { b: 0, r: 3, y: 5, level: 'Quaternary' },
-            'Gold': { b: 0, r: 1, y: 7, level: 'Quaternary' },
-            'Lime': { b: 1, r: 0, y: 7, level: 'Quaternary' },
-            'YellowGreen': { b: 3, r: 0, y: 5, level: 'Quaternary' },
-            'Cyan': { b: 5, r: 0, y: 3, level: 'Quaternary' },
-            'Azure': { b: 7, r: 0, y: 1, level: 'Quaternary' },
+            // Quaternary (12) - Wikipedia standard
+            'Scarlet': { r: 7, y: 1, b: 0, level: 'Quaternary' },
+            'Persimmon': { r: 5, y: 3, b: 0, level: 'Quaternary' },
+            'Sun': { r: 3, y: 5, b: 0, level: 'Quaternary' },
+            'Golden': { r: 1, y: 7, b: 0, level: 'Quaternary' },
+            'Lemon': { r: 0, y: 7, b: 1, level: 'Quaternary' },
+            'Lime': { r: 0, y: 5, b: 3, level: 'Quaternary' },
+            'Viridian': { r: 0, y: 3, b: 5, level: 'Quaternary' },
+            'Cerulean': { r: 0, y: 1, b: 7, level: 'Quaternary' },
+            'Indigo': { r: 1, y: 0, b: 7, level: 'Quaternary' },
+            'Amethyst': { r: 3, y: 0, b: 5, level: 'Quaternary' },
+            'Aubergine': { r: 5, y: 0, b: 3, level: 'Quaternary' },
+            'Crimson': { r: 7, y: 0, b: 1, level: 'Quaternary' },
 
-            // Quinary (24) - Systematic 16-level ratios
-            // Blue-Red axis
-            'Navy': { b: 15, r: 1, y: 0, level: 'Quinary' },
-            'Prussian': { b: 13, r: 3, y: 0, level: 'Quinary' },
-            'Sapphire': { b: 11, r: 5, y: 0, level: 'Quinary' },
-            'Cobalt': { b: 9, r: 7, y: 0, level: 'Quinary' },
-            'Fuchsia': { b: 7, r: 9, y: 0, level: 'Quinary' },
-            'Cerise': { b: 5, r: 11, y: 0, level: 'Quinary' },
-            'Wine': { b: 3, r: 13, y: 0, level: 'Quinary' },
-            'Ruby': { b: 1, r: 15, y: 0, level: 'Quinary' },
-            // Red-Yellow axis
-            'Carmine': { b: 0, r: 15, y: 1, level: 'Quinary' },
-            'Rust': { b: 0, r: 13, y: 3, level: 'Quinary' },
-            'Coral': { b: 0, r: 11, y: 5, level: 'Quinary' },
-            'Salmon': { b: 0, r: 9, y: 7, level: 'Quinary' },
-            'Peach': { b: 0, r: 7, y: 9, level: 'Quinary' },
-            'Apricot': { b: 0, r: 5, y: 11, level: 'Quinary' },
-            'Cream': { b: 0, r: 3, y: 13, level: 'Quinary' },
-            'Canary': { b: 0, r: 1, y: 15, level: 'Quinary' },
-            // Yellow-Blue axis
-            'Lemon': { b: 1, r: 0, y: 15, level: 'Quinary' },
-            'Lime': { b: 3, r: 0, y: 13, level: 'Quinary' },
-            'Spring': { b: 5, r: 0, y: 11, level: 'Quinary' },
-            'Emerald': { b: 7, r: 0, y: 9, level: 'Quinary' },
-            'Jade': { b: 9, r: 0, y: 7, level: 'Quinary' },
-            'Turquoise': { b: 11, r: 0, y: 5, level: 'Quinary' },
-            'Aquamarine': { b: 13, r: 0, y: 3, level: 'Quinary' },
-            'Cerulean': { b: 15, r: 0, y: 1, level: 'Quinary' }
+            // Quinary (24) - Descriptive hyphenated names
+            'Red-Scarlet': { r: 15, y: 1, b: 0, level: 'Quinary' },
+            'Scarlet-Vermilion': { r: 13, y: 3, b: 0, level: 'Quinary' },
+            'Vermilion-Persimmon': { r: 11, y: 5, b: 0, level: 'Quinary' },
+            'Persimmon-Orange': { r: 9, y: 7, b: 0, level: 'Quinary' },
+            'Orange-Sun': { r: 7, y: 9, b: 0, level: 'Quinary' },
+            'Sun-Amber': { r: 5, y: 11, b: 0, level: 'Quinary' },
+            'Amber-Golden': { r: 3, y: 13, b: 0, level: 'Quinary' },
+            'Golden-Yellow': { r: 1, y: 15, b: 0, level: 'Quinary' },
+            'Yellow-Lemon': { r: 0, y: 15, b: 1, level: 'Quinary' },
+            'Lemon-Chartreuse': { r: 0, y: 13, b: 3, level: 'Quinary' },
+            'Chartreuse-Lime': { r: 0, y: 11, b: 5, level: 'Quinary' },
+            'Lime-Green': { r: 0, y: 9, b: 7, level: 'Quinary' },
+            'Green-Viridian': { r: 0, y: 7, b: 9, level: 'Quinary' },
+            'Viridian-Teal': { r: 0, y: 5, b: 11, level: 'Quinary' },
+            'Teal-Cerulean': { r: 0, y: 3, b: 13, level: 'Quinary' },
+            'Cerulean-Blue': { r: 0, y: 1, b: 15, level: 'Quinary' },
+            'Blue-Indigo': { r: 1, y: 0, b: 15, level: 'Quinary' },
+            'Indigo-Violet': { r: 3, y: 0, b: 13, level: 'Quinary' },
+            'Violet-Amethyst': { r: 5, y: 0, b: 11, level: 'Quinary' },
+            'Amethyst-Purple': { r: 7, y: 0, b: 9, level: 'Quinary' },
+            'Purple-Aubergine': { r: 9, y: 0, b: 7, level: 'Quinary' },
+            'Aubergine-Magenta': { r: 11, y: 0, b: 5, level: 'Quinary' },
+            'Magenta-Crimson': { r: 13, y: 0, b: 3, level: 'Quinary' },
+            'Crimson-Red': { r: 15, y: 0, b: 1, level: 'Quinary' }
         };
 
-        // RYB to RGB conversion
-        function rybToRgb(b, r, y) {
-            const total = b + r + y;
+        // RYB to RGB conversion (takes Red, Yellow, Blue values)
+        function rybToRgb(r, y, b) {
+            const total = r + y + b;
             if (total === 0) return { r: 128, g: 128, b: 128 };
 
             // Normalize
-            const bn = b / total;
             const rn = r / total;
             const yn = y / total;
+            const bn = b / total;
 
             // RYB to RGB conversion matrix (approximation)
             const rgb_r = Math.round(255 * (rn + yn * 0.5 + bn * 0.1));
@@ -389,12 +386,12 @@
             return b === 0 ? a : gcd(b, a % b);
         }
 
-        function simplifyRatio(b, r, y) {
-            const divisor = gcd(gcd(b, r), y);
+        function simplifyRatio(r, y, b) {
+            const divisor = gcd(gcd(r, y), b);
             return {
-                b: b / divisor,
                 r: r / divisor,
-                y: y / divisor
+                y: y / divisor,
+                b: b / divisor
             };
         }
 
@@ -408,22 +405,22 @@
                 }
             }
 
-            // Check if it's coordinates [b,r,y]
+            // Check if it's coordinates [r,y,b]
             const coordMatch = input.match(/\[?\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)\s*\]?/);
             if (coordMatch) {
-                const b = parseInt(coordMatch[1]);
-                const r = parseInt(coordMatch[2]);
-                const y = parseInt(coordMatch[3]);
-                return { b, r, y };
+                const r = parseInt(coordMatch[1]);
+                const y = parseInt(coordMatch[2]);
+                const b = parseInt(coordMatch[3]);
+                return { r, y, b };
             }
 
-            // Check for [XB, YR, ZY] format
-            const labeledMatch = input.match(/\[?\s*(\d+)\s*B[,\s]+(\d+)\s*R[,\s]+(\d+)\s*Y\s*\]?/i);
+            // Check for [XR, YY, ZB] format
+            const labeledMatch = input.match(/\[?\s*(\d+)\s*R[,\s]+(\d+)\s*Y[,\s]+(\d+)\s*B\s*\]?/i);
             if (labeledMatch) {
                 return {
-                    b: parseInt(labeledMatch[1]),
-                    r: parseInt(labeledMatch[2]),
-                    y: parseInt(labeledMatch[3])
+                    r: parseInt(labeledMatch[1]),
+                    y: parseInt(labeledMatch[2]),
+                    b: parseInt(labeledMatch[3])
                 };
             }
 
@@ -526,16 +523,16 @@
                 y: expanded.y - (subtract.y * totalParts)
             };
 
-            return simplifyRatio(result.b, result.r, result.y);
+            return simplifyRatio(result.r, result.y, result.b);
         }
 
-        function identifyColor(b, r, y) {
-            const simplified = simplifyRatio(b, r, y);
+        function identifyColor(r, y, b) {
+            const simplified = simplifyRatio(r, y, b);
 
             // Check for exact match
             for (let name in colors) {
                 const c = colors[name];
-                if (c.b === simplified.b && c.r === simplified.r && c.y === simplified.y) {
+                if (c.r === simplified.r && c.y === simplified.y && c.b === simplified.b) {
                     return { name, level: c.level, ...simplified };
                 }
             }
@@ -547,9 +544,9 @@
             for (let name in colors) {
                 const c = colors[name];
                 const distance = Math.sqrt(
-                    Math.pow(c.b - simplified.b, 2) +
                     Math.pow(c.r - simplified.r, 2) +
-                    Math.pow(c.y - simplified.y, 2)
+                    Math.pow(c.y - simplified.y, 2) +
+                    Math.pow(c.b - simplified.b, 2)
                 );
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -575,7 +572,7 @@
                 return;
             }
 
-            const rgb = rybToRgb(result.b, result.r, result.y);
+            const rgb = rybToRgb(result.r, result.y, result.b);
             const hex = rgbToHex(rgb);
 
             container.innerHTML = `
@@ -586,7 +583,7 @@
                         <div class="color-info">
                             <p><strong>${result.name}</strong></p>
                             <p>Level: ${result.level}</p>
-                            <p>Coordinates: [${result.b}, ${result.r}, ${result.y}]</p>
+                            <p>Coordinates: [${result.r}, ${result.y}, ${result.b}]</p>
                             <p>RGB: ${hex}</p>
                         </div>
                     </div>
@@ -612,11 +609,11 @@
             let finalResult;
             if (operation.operation === 'add') {
                 const sum = addColors(operation.left, operation.right);
-                finalResult = identifyColor(sum.b, sum.r, sum.y);
+                finalResult = identifyColor(sum.r, sum.y, sum.b);
             } else {
                 finalResult = subtractColors(operation.left, operation.right);
                 if (!finalResult.error) {
-                    finalResult = identifyColor(finalResult.b, finalResult.r, finalResult.y);
+                    finalResult = identifyColor(finalResult.r, finalResult.y, finalResult.b);
                 }
             }
 
@@ -632,13 +629,13 @@
                 result.innerHTML = `
                     <div class="result error">
                         <h3>Error</h3>
-                        <p>Invalid color. Use a color name or coordinates like [1,1,0]</p>
+                        <p>Invalid color. Use a color name or coordinates like [1,0,1] in [R,Y,B] format</p>
                     </div>
                 `;
                 return;
             }
 
-            const identified = identifyColor(color.b, color.r, color.y);
+            const identified = identifyColor(color.r, color.y, color.b);
             displayResult(result, identified);
         }
 
@@ -663,7 +660,7 @@
                     html += `<h3 style="margin-top: 20px; margin-bottom: 10px; color: #667eea;">${level} Colors (${levelColors.length})</h3>`;
                     html += '<div class="color-grid">';
                     levelColors.forEach(([name, c]) => {
-                        const rgb = rybToRgb(c.b, c.r, c.y);
+                        const rgb = rybToRgb(c.r, c.y, c.b);
                         const hex = rgbToHex(rgb);
                         html += `
                             <div class="color-card">
@@ -671,7 +668,7 @@
                                     <div class="color-card-swatch" style="background-color: ${hex};"></div>
                                     <div class="color-card-name">${name}</div>
                                 </div>
-                                <div class="color-card-coord">[${c.b}, ${c.r}, ${c.y}]</div>
+                                <div class="color-card-coord">[${c.r}, ${c.y}, ${c.b}]</div>
                             </div>
                         `;
                     });
