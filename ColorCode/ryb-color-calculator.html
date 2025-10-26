@@ -39,9 +39,22 @@
             margin-bottom: 10px;
         }
 
-        header p {
-            font-size: 1.1em;
+        header h2 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            font-weight: normal;
             opacity: 0.95;
+        }
+
+        header p {
+            font-size: 1em;
+            opacity: 0.95;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            text-align: left;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .main-content {
@@ -181,11 +194,51 @@
             border-radius: 8px;
             border-left: 4px solid #667eea;
             transition: transform 0.2s;
+            cursor: pointer;
         }
 
         .color-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.2s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: scaleIn 0.3s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         .color-card-header {
@@ -240,25 +293,27 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎨 Paint Color Mixer</h1>
-            <p>Mix colors using RYB (Red-Yellow-Blue) Color Theory</p>
+            <h1>Paint Color Mixer</h1>
+            <h2>A Tool For Answering Ulysses's Questions!</h2>
+            <p>Think of this webpage as the palette that you mix colors on and the calculator tells you what you colors you get out afterward. Example 1: Green + Chartreuse = Lime (since this entry assumes that Green and Chartreuse are mixed in equal proportions); Example 2: 3 Blue + Red = Violet = Blue + Blue + Blue + Red; Example 3: 2 Orange + Blue = Brown</p>
+            <p>This tool also allows for "un-mixing"—this is the OPPOSITE of mixing: Example 1: Blue + Red = Purple SO… Purple - Blue = Red; Example 2: Violet - Blue = Purple; Example 3: Violet - Red = IMPOSSIBLE (since what + red = Violet? There is no such color! The question implies equal parts BLANK + Red = Violet.)</p>
+            <p><strong>Other features:</strong> The calculator supports "names" of colors along with coordinates, so [0,0,1]+[1,0,0] is equivalent to Blue + Red. Also, to look up a color, you can treat it as adding a color to nothing, so simply typing Brown will pop up info on brown.</p>
         </header>
 
         <div class="main-content">
-            <div class="section">
-                <h2>Mix Colors</h2>
+            <div class="section" style="grid-column: 1 / -1;">
+                <h2>Mix and "Un-Mix" Colors</h2>
                 <div class="help-text">
-                    <strong>Examples:</strong>
-                    Blue + Red<br>
-                    2 Blue + 1 Violet<br>
-                    Blue + Blue + Blue + Red<br>
-                    Red + Yellow + Blue (= Brown)<br>
-                    Purple - Blue<br>
-                    Violet - 2 Blue
+                    <strong>Mixing Examples:</strong>
+                    Blue + Red, [1,0,1] + [0,0,1], 2 Blue + 1 Violet, Red + Yellow + Blue (= Brown)<br>
+                    <strong>Un-Mixing Examples:</strong>
+                    Purple - Blue, Violet - 2 Blue<br>
+                    <strong>Lookup Examples:</strong>
+                    Brown, Persimmon-Orange, [1,0,1], [1.5, 2.3, 1.0]
                 </div>
                 <div class="input-group">
-                    <label for="mixInput">Enter color operation (supports multiple + and -):</label>
-                    <input type="text" id="mixInput" placeholder="e.g., Blue + Red or Blue + Blue + Red">
+                    <label for="mixInput">Enter color operation or lookup (supports +, -, color names, and coordinates):</label>
+                    <input type="text" id="mixInput" placeholder="e.g., Blue + Red, Purple - Blue, or just Brown">
                 </div>
                 <div class="button-group">
                     <button onclick="processOperation()">Calculate</button>
@@ -267,29 +322,17 @@
                 <div id="mixResult"></div>
             </div>
 
-            <div class="section">
-                <h2>Lookup Color</h2>
-                <div class="help-text">
-                    <strong>Examples:</strong>
-                    Purple<br>
-                    [1,0,1] or 1,0,1<br>
-                    [1R, 0Y, 1B]
-                </div>
-                <div class="input-group">
-                    <label for="lookupInput">Enter color name or coordinates [R,Y,B]:</label>
-                    <input type="text" id="lookupInput" placeholder="e.g., Purple or [1,0,1]">
-                </div>
-                <div class="button-group">
-                    <button onclick="lookupColor()">Lookup</button>
-                    <button onclick="clearLookup()">Clear</button>
-                </div>
-                <div id="lookupResult"></div>
-            </div>
-
             <div class="section reference">
                 <h2>Color Reference Guide</h2>
                 <div id="colorReference"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal for color details -->
+    <div id="colorModal" class="modal">
+        <div class="modal-content">
+            <div id="modalColorDetails"></div>
         </div>
     </div>
 
@@ -301,11 +344,13 @@
             'Yellow': { r: 0, y: 1, b: 0, level: 'Primary' },
             'Blue': { r: 0, y: 0, b: 1, level: 'Primary' },
 
-            // Secondary (4)
+            // Secondary (3)
             'Orange': { r: 1, y: 1, b: 0, level: 'Secondary' },
             'Green': { r: 0, y: 1, b: 1, level: 'Secondary' },
             'Purple': { r: 1, y: 0, b: 1, level: 'Secondary' },
-            'Brown': { r: 1, y: 1, b: 1, level: 'Secondary' },
+
+            // Brown (1) - Special mixed color
+            'Brown': { r: 1, y: 1, b: 1, level: 'Brown' },
 
             // Tertiary (6) - Wikipedia standard
             'Vermilion': { r: 3, y: 1, b: 0, level: 'Tertiary' },
@@ -356,25 +401,98 @@
             'Crimson-Red': { r: 15, y: 0, b: 1, level: 'Quinary' }
         };
 
+        // RGB lookup table for known RYB colors
+        const rybToRgbLookup = {
+            // Primary
+            '1,0,0': { r: 254, g: 39, b: 18 },     // Red
+            '0,1,0': { r: 254, g: 221, b: 0 },     // Yellow
+            '0,0,1': { r: 2, g: 71, b: 254 },      // Blue
+
+            // Secondary
+            '1,1,0': { r: 255, g: 102, b: 0 },     // Orange
+            '0,1,1': { r: 0, g: 153, b: 51 },      // Green
+            '1,0,1': { r: 134, g: 1, b: 175 },     // Purple
+
+            // Brown
+            '1,1,1': { r: 101, g: 67, b: 33 },     // Brown
+        };
+
         // RYB to RGB conversion (takes Red, Yellow, Blue values)
         function rybToRgb(r, y, b) {
             const total = r + y + b;
             if (total === 0) return { r: 128, g: 128, b: 128 };
 
+            // Normalize to simplified ratio for lookup
+            const simplified = simplifyRatio(r, y, b);
+            const lookupKey = `${simplified.r},${simplified.y},${simplified.b}`;
+
+            // Check if we have an exact lookup
+            if (rybToRgbLookup[lookupKey]) {
+                return rybToRgbLookup[lookupKey];
+            }
+
+            // For interpolation, we'll use a better RYB to RGB conversion
             // Normalize
             const rn = r / total;
             const yn = y / total;
             const bn = b / total;
 
-            // RYB to RGB conversion matrix (approximation)
-            const rgb_r = Math.round(255 * (rn + yn * 0.5 + bn * 0.1));
-            const rgb_g = Math.round(255 * (yn + bn * 0.5 + rn * 0.1));
-            const rgb_b = Math.round(255 * (bn + rn * 0.3));
+            // Improved RYB to RGB conversion using interpolation
+            // Use the primary colors as anchors
+            const red_rgb = { r: 254, g: 39, b: 18 };
+            const yellow_rgb = { r: 254, g: 221, b: 0 };
+            const blue_rgb = { r: 2, g: 71, b: 254 };
+
+            // White point
+            const white = { r: 255, g: 255, b: 255 };
+
+            // Blend based on RYB components
+            let rgb_r = white.r * (1 - rn - yn - bn);
+            let rgb_g = white.g * (1 - rn - yn - bn);
+            let rgb_b = white.b * (1 - rn - yn - bn);
+
+            rgb_r += red_rgb.r * rn + yellow_rgb.r * yn + blue_rgb.r * bn;
+            rgb_g += red_rgb.g * rn + yellow_rgb.g * yn + blue_rgb.g * bn;
+            rgb_b += red_rgb.b * rn + yellow_rgb.b * yn + blue_rgb.b * bn;
+
+            // Apply color mixing adjustments
+            // Orange (Red + Yellow)
+            if (rn > 0 && yn > 0 && bn === 0) {
+                const orange = { r: 255, g: 102, b: 0 };
+                const mix = Math.min(rn, yn);
+                rgb_r = rgb_r * (1 - mix) + orange.r * mix;
+                rgb_g = rgb_g * (1 - mix) + orange.g * mix;
+                rgb_b = rgb_b * (1 - mix) + orange.b * mix;
+            }
+            // Green (Yellow + Blue)
+            if (yn > 0 && bn > 0 && rn === 0) {
+                const green = { r: 0, g: 153, b: 51 };
+                const mix = Math.min(yn, bn);
+                rgb_r = rgb_r * (1 - mix) + green.r * mix;
+                rgb_g = rgb_g * (1 - mix) + green.g * mix;
+                rgb_b = rgb_b * (1 - mix) + green.b * mix;
+            }
+            // Purple (Red + Blue)
+            if (rn > 0 && bn > 0 && yn === 0) {
+                const purple = { r: 134, g: 1, b: 175 };
+                const mix = Math.min(rn, bn);
+                rgb_r = rgb_r * (1 - mix) + purple.r * mix;
+                rgb_g = rgb_g * (1 - mix) + purple.g * mix;
+                rgb_b = rgb_b * (1 - mix) + purple.b * mix;
+            }
+            // Brown (Red + Yellow + Blue)
+            if (rn > 0 && yn > 0 && bn > 0) {
+                const brown = { r: 101, g: 67, b: 33 };
+                const mix = Math.min(rn, yn, bn);
+                rgb_r = rgb_r * (1 - mix) + brown.r * mix;
+                rgb_g = rgb_g * (1 - mix) + brown.g * mix;
+                rgb_b = rgb_b * (1 - mix) + brown.b * mix;
+            }
 
             return {
-                r: Math.min(255, Math.max(0, rgb_r)),
-                g: Math.min(255, Math.max(0, rgb_g)),
-                b: Math.min(255, Math.max(0, rgb_b))
+                r: Math.min(255, Math.max(0, Math.round(rgb_r))),
+                g: Math.min(255, Math.max(0, Math.round(rgb_g))),
+                b: Math.min(255, Math.max(0, Math.round(rgb_b)))
             };
         }
 
@@ -398,6 +516,48 @@
             };
         }
 
+        // Levenshtein distance for fuzzy matching
+        function levenshteinDistance(str1, str2) {
+            const m = str1.length;
+            const n = str2.length;
+            const dp = Array(m + 1).fill(null).map(() => Array(n + 1).fill(0));
+
+            for (let i = 0; i <= m; i++) dp[i][0] = i;
+            for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+            for (let i = 1; i <= m; i++) {
+                for (let j = 1; j <= n; j++) {
+                    if (str1[i - 1].toLowerCase() === str2[j - 1].toLowerCase()) {
+                        dp[i][j] = dp[i - 1][j - 1];
+                    } else {
+                        dp[i][j] = Math.min(
+                            dp[i - 1][j] + 1,      // deletion
+                            dp[i][j - 1] + 1,      // insertion
+                            dp[i - 1][j - 1] + 1   // substitution
+                        );
+                    }
+                }
+            }
+
+            return dp[m][n];
+        }
+
+        function findSimilarColorNames(input, maxDistance = 3) {
+            const suggestions = [];
+
+            for (let name in colors) {
+                const distance = levenshteinDistance(input, name);
+                if (distance <= maxDistance) {
+                    suggestions.push({ name, distance });
+                }
+            }
+
+            // Sort by distance (closest first)
+            suggestions.sort((a, b) => a.distance - b.distance);
+
+            return suggestions.slice(0, 3).map(s => s.name);
+        }
+
         function parseColorInput(input) {
             input = input.trim();
 
@@ -408,23 +568,44 @@
                 }
             }
 
-            // Check if it's coordinates [r,y,b]
-            const coordMatch = input.match(/\[?\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)\s*\]?/);
+            // Check if it's coordinates [r,y,b] - now supports floating point
+            const coordMatch = input.match(/\[?\s*(\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)[,\s]+(\d+(?:\.\d+)?)\s*\]?/);
             if (coordMatch) {
-                const r = parseInt(coordMatch[1]);
-                const y = parseInt(coordMatch[2]);
-                const b = parseInt(coordMatch[3]);
+                const r = parseFloat(coordMatch[1]);
+                const y = parseFloat(coordMatch[2]);
+                const b = parseFloat(coordMatch[3]);
+
+                // Validate no negative numbers
+                if (r < 0 || y < 0 || b < 0) {
+                    return { error: 'Coordinates cannot be negative' };
+                }
+
                 return { r, y, b };
             }
 
-            // Check for [XR, YY, ZB] format
-            const labeledMatch = input.match(/\[?\s*(\d+)\s*R[,\s]+(\d+)\s*Y[,\s]+(\d+)\s*B\s*\]?/i);
+            // Check for [XR, YY, ZB] format - now supports floating point
+            const labeledMatch = input.match(/\[?\s*(\d+(?:\.\d+)?)\s*R[,\s]+(\d+(?:\.\d+)?)\s*Y[,\s]+(\d+(?:\.\d+)?)\s*B\s*\]?/i);
             if (labeledMatch) {
+                const r = parseFloat(labeledMatch[1]);
+                const y = parseFloat(labeledMatch[2]);
+                const b = parseFloat(labeledMatch[3]);
+
+                // Validate no negative numbers
+                if (r < 0 || y < 0 || b < 0) {
+                    return { error: 'Coordinates cannot be negative' };
+                }
+
                 return {
-                    r: parseInt(labeledMatch[1]),
-                    y: parseInt(labeledMatch[2]),
-                    b: parseInt(labeledMatch[3])
+                    r: r,
+                    y: y,
+                    b: b
                 };
+            }
+
+            // If we get here, it might be a misspelled color name
+            const suggestions = findSimilarColorNames(input);
+            if (suggestions.length > 0) {
+                return { error: `Color "${input}" not found. Did you mean: ${suggestions.join(', ')}?` };
             }
 
             return null;
@@ -434,6 +615,7 @@
             input = input.trim();
 
             // Split by + and - while preserving the operators
+            // Need to be careful with hyphens in color names
             const tokens = [];
             let currentTerm = '';
             let inBrackets = 0;
@@ -444,7 +626,12 @@
                 if (char === '[') inBrackets++;
                 if (char === ']') inBrackets--;
 
-                if ((char === '+' || char === '-') && inBrackets === 0 && i > 0) {
+                // Check if this is an operator (+ or -) outside brackets
+                // For -, also check that it's preceded by a space or nothing to avoid matching hyphens in color names
+                const isOperator = (char === '+' || char === '-') && inBrackets === 0 && i > 0;
+                const isProbablyOperator = isOperator && (char === '+' || (char === '-' && (i === 0 || input[i-1] === ' ')));
+
+                if (isProbablyOperator) {
                     // Found an operator outside brackets
                     tokens.push({ type: 'term', value: currentTerm.trim() });
                     tokens.push({ type: 'operator', value: char });
@@ -459,7 +646,14 @@
                 tokens.push({ type: 'term', value: currentTerm.trim() });
             }
 
-            // Must have at least one term and one operator
+            // If only one term, treat it as a lookup
+            if (tokens.length === 1 && tokens[0].type === 'term') {
+                const color = parseColorTerm(tokens[0].value);
+                if (!color) return null;
+                return [{ type: 'color', color }];
+            }
+
+            // Must have at least one term and one operator for operations
             if (tokens.length < 3) {
                 return null;
             }
@@ -625,16 +819,20 @@
                 }
             }
 
-            // Find closest match
+            // Custom color naming system
+            return identifyCustomColor(simplified.r, simplified.y, simplified.b);
+        }
+
+        function findClosestColor(r, y, b) {
             let closest = null;
             let minDistance = Infinity;
 
             for (let name in colors) {
                 const c = colors[name];
                 const distance = Math.sqrt(
-                    Math.pow(c.r - simplified.r, 2) +
-                    Math.pow(c.y - simplified.y, 2) +
-                    Math.pow(c.b - simplified.b, 2)
+                    Math.pow(c.r - r, 2) +
+                    Math.pow(c.y - y, 2) +
+                    Math.pow(c.b - b, 2)
                 );
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -642,10 +840,124 @@
                 }
             }
 
+            return closest;
+        }
+
+        function identifyCustomColor(r, y, b) {
+            // Check if color contains brown (equal parts R, Y, B)
+            const minComponent = Math.min(r, y, b);
+
+            if (minComponent > 0) {
+                // Contains brown
+                const brownMass = minComponent * 3; // Brown is [1,1,1]
+                const leftoverR = r - minComponent;
+                const leftoverY = y - minComponent;
+                const leftoverB = b - minComponent;
+                const leftoverMass = leftoverR + leftoverY + leftoverB;
+
+                if (leftoverMass === 0) {
+                    // Pure brown
+                    return { name: 'Brown', level: 'Brown', r, y, b };
+                }
+
+                // Find the closest color to the leftover
+                const leftoverColorName = findClosestColor(leftoverR, leftoverY, leftoverB);
+
+                // Determine naming based on mass comparison
+                if (leftoverMass > brownMass) {
+                    // More leftover than brown: "brownish-Color"
+                    return { name: `Brownish-${leftoverColorName}`, level: 'Custom', r, y, b };
+                } else if (leftoverMass === brownMass) {
+                    // Equal: "Color-Brown"
+                    return { name: `${leftoverColorName}-Brown`, level: 'Custom', r, y, b };
+                } else {
+                    // More brown than leftover
+                    if (brownMass >= 2 * leftoverMass) {
+                        // At least 2x brown: "Shade of Brown"
+                        return { name: `Shade of Brown`, level: 'Custom', r, y, b };
+                    } else {
+                        // Less than 2x: "Colorish-Brown"
+                        return { name: `${leftoverColorName}ish-Brown`, level: 'Custom', r, y, b };
+                    }
+                }
+            }
+
+            // No brown - find base color (highest mass component or combination)
+            // First, check if this is close to a primary color
+            const total = r + y + b;
+
+            // Try to find the dominant color(s)
+            // Find all named colors and see which has the highest "mass" in this color
+            let maxMass = 0;
+            let baseColor = null;
+
+            for (let name in colors) {
+                const c = colors[name];
+                // Calculate how many "units" of this color fit into our color
+                if (c.r === 0 && c.y === 0 && c.b === 0) continue;
+
+                const maxUnits = Math.min(
+                    c.r > 0 ? r / c.r : Infinity,
+                    c.y > 0 ? y / c.y : Infinity,
+                    c.b > 0 ? b / c.b : Infinity
+                );
+
+                if (maxUnits > 0) {
+                    const mass = maxUnits * (c.r + c.y + c.b);
+                    if (mass > maxMass) {
+                        maxMass = mass;
+                        baseColor = name;
+                    }
+                }
+            }
+
+            if (baseColor) {
+                const c = colors[baseColor];
+                const units = Math.min(
+                    c.r > 0 ? r / c.r : Infinity,
+                    c.y > 0 ? y / c.y : Infinity,
+                    c.b > 0 ? b / c.b : Infinity
+                );
+
+                const baseMass = units * (c.r + c.y + c.b);
+                const leftoverR = r - units * c.r;
+                const leftoverY = y - units * c.y;
+                const leftoverB = b - units * c.b;
+                const leftoverMass = leftoverR + leftoverY + leftoverB;
+
+                if (leftoverMass < 0.001) {
+                    // Essentially pure base color (shouldn't happen as we check exact matches earlier)
+                    return { name: baseColor, level: 'Custom', r, y, b };
+                }
+
+                // Find closest color to the leftover
+                const modifierColorName = findClosestColor(leftoverR, leftoverY, leftoverB);
+
+                // Determine naming based on mass comparison
+                if (leftoverMass > baseMass) {
+                    // More modifier than base: "baseish-Modifier"
+                    return { name: `${baseColor}ish-${modifierColorName}`, level: 'Custom', r, y, b };
+                } else if (leftoverMass === baseMass) {
+                    // Equal: "Modifier-Base"
+                    return { name: `${modifierColorName}-${baseColor}`, level: 'Custom', r, y, b };
+                } else {
+                    // More base than modifier
+                    if (baseMass >= 2 * leftoverMass) {
+                        // At least 2x base: "Shade of Base"
+                        return { name: `Shade of ${baseColor}`, level: 'Custom', r, y, b };
+                    } else {
+                        // Less than 2x: "Modifierish-Base"
+                        return { name: `${modifierColorName}ish-${baseColor}`, level: 'Custom', r, y, b };
+                    }
+                }
+            }
+
+            // Fallback to closest match
+            const closest = findClosestColor(r, y, b);
             return {
                 name: `Shade of ${closest}`,
                 level: 'Custom',
-                ...simplified
+                r, y, b
             };
         }
 
@@ -683,14 +995,39 @@
             const input = document.getElementById('mixInput').value;
             const result = document.getElementById('mixResult');
 
+            if (!input.trim()) {
+                result.innerHTML = '';
+                return;
+            }
+
             const operations = parseOperation(input);
             if (!operations) {
                 result.innerHTML = `
                     <div class="result error">
                         <h3>Error</h3>
-                        <p>Invalid operation. Use format: "Blue + Red" or "Blue + Blue + Red"</p>
+                        <p>Invalid input. Please check your color names or coordinates.</p>
+                        <p>Examples: "Blue + Red", "[1,0,1] + [0,0,1]", "Brown", "Persimmon-Orange"</p>
                     </div>
                 `;
+                return;
+            }
+
+            // Check if first color has an error
+            if (operations[0].color.error) {
+                result.innerHTML = `
+                    <div class="result error">
+                        <h3>Error</h3>
+                        <p>${operations[0].color.error}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // If only one term, it's a lookup
+            if (operations.length === 1) {
+                const color = operations[0].color;
+                const identified = identifyColor(color.r, color.y, color.b);
+                displayResult(result, identified);
                 return;
             }
 
@@ -700,6 +1037,17 @@
             for (let i = 1; i < operations.length; i += 2) {
                 const operator = operations[i];
                 const nextColor = operations[i + 1].color;
+
+                // Check for errors in the next color
+                if (nextColor.error) {
+                    result.innerHTML = `
+                        <div class="result error">
+                            <h3>Error</h3>
+                            <p>${nextColor.error}</p>
+                        </div>
+                    `;
+                    return;
+                }
 
                 if (operator.operator === 'add') {
                     currentColor = addColors(currentColor, nextColor);
@@ -717,38 +1065,41 @@
             displayResult(result, finalResult);
         }
 
-        function lookupColor() {
-            const input = document.getElementById('lookupInput').value;
-            const result = document.getElementById('lookupResult');
-
-            const color = parseColorInput(input);
-            if (!color) {
-                result.innerHTML = `
-                    <div class="result error">
-                        <h3>Error</h3>
-                        <p>Invalid color. Use a color name or coordinates like [1,0,1] in [R,Y,B] format</p>
-                    </div>
-                `;
-                return;
-            }
-
-            const identified = identifyColor(color.r, color.y, color.b);
-            displayResult(result, identified);
-        }
-
         function clearMix() {
             document.getElementById('mixInput').value = '';
             document.getElementById('mixResult').innerHTML = '';
         }
 
-        function clearLookup() {
-            document.getElementById('lookupInput').value = '';
-            document.getElementById('lookupResult').innerHTML = '';
+        function showColorModal(name, colorData) {
+            const modal = document.getElementById('colorModal');
+            const modalContent = document.getElementById('modalColorDetails');
+
+            const rgb = rybToRgb(colorData.r, colorData.y, colorData.b);
+            const hex = rgbToHex(rgb);
+
+            modalContent.innerHTML = `
+                <div class="color-display">
+                    <div class="color-swatch" style="background-color: ${hex};"></div>
+                    <div class="color-info">
+                        <p><strong>${name}</strong></p>
+                        <p>Level: ${colorData.level}</p>
+                        <p>Coordinates: [${colorData.r}, ${colorData.y}, ${colorData.b}]</p>
+                        <p>RGB: ${hex}</p>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeColorModal() {
+            const modal = document.getElementById('colorModal');
+            modal.classList.remove('active');
         }
 
         function populateReference() {
             const container = document.getElementById('colorReference');
-            const levels = ['Primary', 'Secondary', 'Tertiary', 'Quaternary', 'Quinary'];
+            const levels = ['Primary', 'Secondary', 'Brown', 'Tertiary', 'Quaternary', 'Quinary'];
 
             let html = '';
             levels.forEach(level => {
@@ -760,7 +1111,7 @@
                         const rgb = rybToRgb(c.r, c.y, c.b);
                         const hex = rgbToHex(rgb);
                         html += `
-                            <div class="color-card">
+                            <div class="color-card" onclick="showColorModal('${name}', ${JSON.stringify(c).replace(/"/g, '&quot;')})">
                                 <div class="color-card-header">
                                     <div class="color-card-swatch" style="background-color: ${hex};"></div>
                                     <div class="color-card-name">${name}</div>
@@ -783,8 +1134,12 @@
         document.getElementById('mixInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') processOperation();
         });
-        document.getElementById('lookupInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') lookupColor();
+
+        // Close modal when clicking outside
+        document.getElementById('colorModal').addEventListener('click', (e) => {
+            if (e.target.id === 'colorModal') {
+                closeColorModal();
+            }
         });
     </script>
 </body>
