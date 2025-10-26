@@ -538,33 +538,37 @@
             // Calculate total mass of expanded color
             const totalMass = expanded.r + expanded.y + expanded.b;
 
-            // Check if each component being subtracted is at least m% of the expanded color
+            // Calculate mass to remove: m% of total mass, with composition matching what we're subtracting
+            const massToRemove = m_percent * totalMass;
+            const baseTotalSubtract = baseSubtract_r + baseSubtract_y + baseSubtract_b;
+
+            // Check if we have enough of each component to remove what's needed
             const checks = [];
             if (baseSubtract_r > 0) {
-                const actualPercent = expanded.r / totalMass;
+                const amountToRemove = (baseSubtract_r / baseTotalSubtract) * massToRemove;
                 checks.push({
                     color: 'Red',
-                    required: m_percent,
-                    actual: actualPercent,
-                    ok: actualPercent >= m_percent
+                    needed: amountToRemove,
+                    available: expanded.r,
+                    ok: expanded.r >= amountToRemove - 0.0001  // small epsilon for floating point
                 });
             }
             if (baseSubtract_y > 0) {
-                const actualPercent = expanded.y / totalMass;
+                const amountToRemove = (baseSubtract_y / baseTotalSubtract) * massToRemove;
                 checks.push({
                     color: 'Yellow',
-                    required: m_percent,
-                    actual: actualPercent,
-                    ok: actualPercent >= m_percent
+                    needed: amountToRemove,
+                    available: expanded.y,
+                    ok: expanded.y >= amountToRemove - 0.0001
                 });
             }
             if (baseSubtract_b > 0) {
-                const actualPercent = expanded.b / totalMass;
+                const amountToRemove = (baseSubtract_b / baseTotalSubtract) * massToRemove;
                 checks.push({
                     color: 'Blue',
-                    required: m_percent,
-                    actual: actualPercent,
-                    ok: actualPercent >= m_percent
+                    needed: amountToRemove,
+                    available: expanded.b,
+                    ok: expanded.b >= amountToRemove - 0.0001
                 });
             }
 
@@ -572,10 +576,6 @@
             if (!allOk) {
                 return { error: 'NOT POSSIBLE - insufficient color to subtract' };
             }
-
-            // Calculate mass to remove: m% of total mass, with composition matching what we're subtracting
-            const massToRemove = m_percent * totalMass;
-            const baseTotalSubtract = baseSubtract_r + baseSubtract_y + baseSubtract_b;
 
             // Remove mass with same composition as 'subtract'
             const result = {
