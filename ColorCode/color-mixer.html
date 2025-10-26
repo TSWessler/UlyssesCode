@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Color Mixer - RYB Color Theory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+        }
+
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .color-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .color-swatch {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            border: 3px solid #333;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .color-info p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .reference {
+            grid-column: 1 / -1;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .color-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+        }
+
+        .color-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .color-card-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            border: 2px solid #333;
+        }
+
+        .color-card-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .color-card-coord {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .help-text {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #004085;
+            font-size: 0.95em;
+        }
+
+        .help-text strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .reference {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Paint Color Mixer</h1>
+            <p>Mix colors using RYB (Red-Yellow-Blue) Color Theory</p>
+        </header>
+
+        <div class="main-content">
+            <div class="section">
+                <h2>Mix Colors</h2>
+                <div class="help-text">
+                    <strong>Examples:</strong>
+                    Blue + Red<br>
+                    2 Blue + 1 Violet<br>
+                    Purple - Blue<br>
+                    Violet - 2 Blue
+                </div>
+                <div class="input-group">
+                    <label for="mixInput">Enter color operation:</label>
+                    <input type="text" id="mixInput" placeholder="e.g., Blue + Red or Violet - 2 Blue">
+                </div>
+                <div class="button-group">
+                    <button onclick="processOperation()">Calculate</button>
+                    <button onclick="clearMix()">Clear</button>
+                </div>
+                <div id="mixResult"></div>
+            </div>
+
+            <div class="section">
+                <h2>Lookup Color</h2>
+                <div class="help-text">
+                    <strong>Examples:</strong>
+                    Purple<br>
+                    [3,1,0] or 3,1,0<br>
+                    [1B, 1R, 0Y]
+                </div>
+                <div class="input-group">
+                    <label for="lookupInput">Enter color name or coordinates:</label>
+                    <input type="text" id="lookupInput" placeholder="e.g., Purple or [1,1,0]">
+                </div>
+                <div class="button-group">
+                    <button onclick="lookupColor()">Lookup</button>
+                    <button onclick="clearLookup()">Clear</button>
+                </div>
+                <div id="lookupResult"></div>
+            </div>
+
+            <div class="section reference">
+                <h2>Color Reference Guide</h2>
+                <div id="colorReference"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Define the complete color system
+        const colors = {
+            // Primary (3)
+            'Blue': { b: 1, r: 0, y: 0, level: 'Primary' },
+            'Red': { b: 0, r: 1, y: 0, level: 'Primary' },
+            'Yellow': { b: 0, r: 0, y: 1, level: 'Primary' },
+
+            // Secondary (3)
+            'Purple': { b: 1, r: 1, y: 0, level: 'Secondary' },
+            'Orange': { b: 0, r: 1, y: 1, level: 'Secondary' },
+            'Green': { b: 1, r: 0, y: 1, level: 'Secondary' },
+
+            // Tertiary (6)
+            'Violet': { b: 3, r: 1, y: 0, level: 'Tertiary' },
+            'Crimson': { b: 1, r: 3, y: 0, level: 'Tertiary' },
+            'Vermilion': { b: 0, r: 3, y: 1, level: 'Tertiary' },
+            'Amber': { b: 0, r: 1, y: 3, level: 'Tertiary' },
+            'Chartreuse': { b: 1, r: 0, y: 3, level: 'Tertiary' },
+            'Teal': { b: 3, r: 0, y: 1, level: 'Tertiary' },
+
+            // Quaternary (12)
+            'Ultramarine': { b: 7, r: 1, y: 0, level: 'Quaternary' },
+            'Indigo': { b: 5, r: 3, y: 0, level: 'Quaternary' },
+            'Magenta': { b: 3, r: 5, y: 0, level: 'Quaternary' },
+            'Rose': { b: 1, r: 7, y: 0, level: 'Quaternary' },
+            'Scarlet': { b: 0, r: 7, y: 1, level: 'Quaternary' },
+            'RedOrange': { b: 0, r: 5, y: 3, level: 'Quaternary' },
+            'Tangerine': { b: 0, r: 3, y: 5, level: 'Quaternary' },
+            'Gold': { b: 0, r: 1, y: 7, level: 'Quaternary' },
+            'Lime': { b: 1, r: 0, y: 7, level: 'Quaternary' },
+            'YellowGreen': { b: 3, r: 0, y: 5, level: 'Quaternary' },
+            'Cyan': { b: 5, r: 0, y: 3, level: 'Quaternary' },
+            'Azure': { b: 7, r: 0, y: 1, level: 'Quaternary' },
+
+            // Quinary (14)
+            'Sapphire': { b: 11, r: 1, y: 0, level: 'Quinary' },
+            'Navy': { b: 15, r: 1, y: 0, level: 'Quinary' },
+            'Cobalt': { b: 9, r: 7, y: 0, level: 'Quinary' },
+            'Fuchsia': { b: 7, r: 9, y: 0, level: 'Quinary' },
+            'Cerise': { b: 5, r: 11, y: 0, level: 'Quinary' },
+            'Ruby': { b: 1, r: 15, y: 0, level: 'Quinary' },
+            'Coral': { b: 0, r: 11, y: 5, level: 'Quinary' },
+            'Peach': { b: 0, r: 7, y: 9, level: 'Quinary' },
+            'Apricot': { b: 0, r: 5, y: 11, level: 'Quinary' },
+            'Canary': { b: 0, r: 1, y: 15, level: 'Quinary' },
+            'Spring': { b: 5, r: 0, y: 11, level: 'Quinary' },
+            'Jade': { b: 9, r: 0, y: 7, level: 'Quinary' },
+            'Turquoise': { b: 11, r: 0, y: 5, level: 'Quinary' },
+            'Cerulean': { b: 15, r: 0, y: 1, level: 'Quinary' }
+        };
+
+        // RYB to RGB conversion
+        function rybToRgb(b, r, y) {
+            const total = b + r + y;
+            if (total === 0) return { r: 128, g: 128, b: 128 };
+
+            // Normalize
+            const bn = b / total;
+            const rn = r / total;
+            const yn = y / total;
+
+            // RYB to RGB conversion matrix (approximation)
+            const rgb_r = Math.round(255 * (rn + yn * 0.5 + bn * 0.1));
+            const rgb_g = Math.round(255 * (yn + bn * 0.5 + rn * 0.1));
+            const rgb_b = Math.round(255 * (bn + rn * 0.3));
+
+            return {
+                r: Math.min(255, Math.max(0, rgb_r)),
+                g: Math.min(255, Math.max(0, rgb_g)),
+                b: Math.min(255, Math.max(0, rgb_b))
+            };
+        }
+
+        function rgbToHex(rgb) {
+            return '#' + [rgb.r, rgb.g, rgb.b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        function gcd(a, b) {
+            return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function simplifyRatio(b, r, y) {
+            const divisor = gcd(gcd(b, r), y);
+            return {
+                b: b / divisor,
+                r: r / divisor,
+                y: y / divisor
+            };
+        }
+
+        function parseColorInput(input) {
+            input = input.trim();
+
+            // Check if it's a color name
+            for (let name in colors) {
+                if (name.toLowerCase() === input.toLowerCase()) {
+                    return { ...colors[name], name };
+                }
+            }
+
+            // Check if it's coordinates [b,r,y]
+            const coordMatch = input.match(/\[?\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)\s*\]?/);
+            if (coordMatch) {
+                const b = parseInt(coordMatch[1]);
+                const r = parseInt(coordMatch[2]);
+                const y = parseInt(coordMatch[3]);
+                return { b, r, y };
+            }
+
+            // Check for [XB, YR, ZY] format
+            const labeledMatch = input.match(/\[?\s*(\d+)\s*B[,\s]+(\d+)\s*R[,\s]+(\d+)\s*Y\s*\]?/i);
+            if (labeledMatch) {
+                return {
+                    b: parseInt(labeledMatch[1]),
+                    r: parseInt(labeledMatch[2]),
+                    y: parseInt(labeledMatch[3])
+                };
+            }
+
+            return null;
+        }
+
+        function parseOperation(input) {
+            input = input.trim();
+
+            // Parse addition (e.g., "2 Blue + 1 Violet")
+            const addMatch = input.match(/^(.+?)\s*\+\s*(.+)$/);
+            if (addMatch) {
+                return {
+                    operation: 'add',
+                    left: parseColorTerm(addMatch[1].trim()),
+                    right: parseColorTerm(addMatch[2].trim())
+                };
+            }
+
+            // Parse subtraction
+            const subMatch = input.match(/^(.+?)\s*-\s*(.+)$/);
+            if (subMatch) {
+                return {
+                    operation: 'subtract',
+                    left: parseColorTerm(subMatch[1].trim()),
+                    right: parseColorTerm(subMatch[2].trim())
+                };
+            }
+
+            return null;
+        }
+
+        function parseColorTerm(term) {
+            term = term.trim();
+
+            // Check for multiplier (e.g., "2 Blue")
+            const multMatch = term.match(/^(\d+)\s+(.+)$/);
+            if (multMatch) {
+                const multiplier = parseInt(multMatch[1]);
+                const color = parseColorInput(multMatch[2]);
+                if (color) {
+                    return {
+                        b: color.b * multiplier,
+                        r: color.r * multiplier,
+                        y: color.y * multiplier
+                    };
+                }
+            }
+
+            return parseColorInput(term);
+        }
+
+        function addColors(c1, c2) {
+            return {
+                b: c1.b + c2.b,
+                r: c1.r + c2.r,
+                y: c1.y + c2.y
+            };
+        }
+
+        function subtractColors(from, subtract) {
+            // Calculate total parts
+            const totalParts = from.b + from.r + from.y + subtract.b + subtract.r + subtract.y;
+
+            // Multiply 'from' color by total parts
+            const expanded = {
+                b: from.b * totalParts,
+                r: from.r * totalParts,
+                y: from.y * totalParts
+            };
+
+            // Calculate required percentage
+            const subtractTotal = subtract.b + subtract.r + subtract.y;
+            const requiredPercent = subtractTotal / totalParts;
+
+            // Check each component
+            const checks = [];
+            if (subtract.b > 0) {
+                const actualPercent = expanded.b / (expanded.b + expanded.r + expanded.y);
+                checks.push({ color: 'Blue', required: requiredPercent, actual: actualPercent, ok: actualPercent >= requiredPercent });
+            }
+            if (subtract.r > 0) {
+                const actualPercent = expanded.r / (expanded.b + expanded.r + expanded.y);
+                checks.push({ color: 'Red', required: requiredPercent, actual: actualPercent, ok: actualPercent >= requiredPercent });
+            }
+            if (subtract.y > 0) {
+                const actualPercent = expanded.y / (expanded.b + expanded.r + expanded.y);
+                checks.push({ color: 'Yellow', required: requiredPercent, actual: actualPercent, ok: actualPercent >= requiredPercent });
+            }
+
+            const allOk = checks.every(c => c.ok);
+            if (!allOk) {
+                return { error: 'NOT POSSIBLE - insufficient color to subtract' };
+            }
+
+            // Perform subtraction
+            const result = {
+                b: expanded.b - (subtract.b * totalParts),
+                r: expanded.r - (subtract.r * totalParts),
+                y: expanded.y - (subtract.y * totalParts)
+            };
+
+            return simplifyRatio(result.b, result.r, result.y);
+        }
+
+        function identifyColor(b, r, y) {
+            const simplified = simplifyRatio(b, r, y);
+
+            // Check for exact match
+            for (let name in colors) {
+                const c = colors[name];
+                if (c.b === simplified.b && c.r === simplified.r && c.y === simplified.y) {
+                    return { name, level: c.level, ...simplified };
+                }
+            }
+
+            // Find closest match
+            let closest = null;
+            let minDistance = Infinity;
+
+            for (let name in colors) {
+                const c = colors[name];
+                const distance = Math.sqrt(
+                    Math.pow(c.b - simplified.b, 2) +
+                    Math.pow(c.r - simplified.r, 2) +
+                    Math.pow(c.y - simplified.y, 2)
+                );
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closest = name;
+                }
+            }
+
+            return {
+                name: `Shade of ${closest}`,
+                level: 'Custom',
+                ...simplified
+            };
+        }
+
+        function displayResult(container, result) {
+            if (result.error) {
+                container.innerHTML = `
+                    <div class="result error">
+                        <h3>Error</h3>
+                        <p>${result.error}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const rgb = rybToRgb(result.b, result.r, result.y);
+            const hex = rgbToHex(rgb);
+
+            container.innerHTML = `
+                <div class="result">
+                    <h3>Result</h3>
+                    <div class="color-display">
+                        <div class="color-swatch" style="background-color: ${hex};"></div>
+                        <div class="color-info">
+                            <p><strong>${result.name}</strong></p>
+                            <p>Level: ${result.level}</p>
+                            <p>Coordinates: [${result.b}, ${result.r}, ${result.y}]</p>
+                            <p>RGB: ${hex}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function processOperation() {
+            const input = document.getElementById('mixInput').value;
+            const result = document.getElementById('mixResult');
+
+            const operation = parseOperation(input);
+            if (!operation) {
+                result.innerHTML = `
+                    <div class="result error">
+                        <h3>Error</h3>
+                        <p>Invalid operation. Use format: "Blue + Red" or "Violet - 2 Blue"</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let finalResult;
+            if (operation.operation === 'add') {
+                const sum = addColors(operation.left, operation.right);
+                finalResult = identifyColor(sum.b, sum.r, sum.y);
+            } else {
+                finalResult = subtractColors(operation.left, operation.right);
+                if (!finalResult.error) {
+                    finalResult = identifyColor(finalResult.b, finalResult.r, finalResult.y);
+                }
+            }
+
+            displayResult(result, finalResult);
+        }
+
+        function lookupColor() {
+            const input = document.getElementById('lookupInput').value;
+            const result = document.getElementById('lookupResult');
+
+            const color = parseColorInput(input);
+            if (!color) {
+                result.innerHTML = `
+                    <div class="result error">
+                        <h3>Error</h3>
+                        <p>Invalid color. Use a color name or coordinates like [1,1,0]</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const identified = identifyColor(color.b, color.r, color.y);
+            displayResult(result, identified);
+        }
+
+        function clearMix() {
+            document.getElementById('mixInput').value = '';
+            document.getElementById('mixResult').innerHTML = '';
+        }
+
+        function clearLookup() {
+            document.getElementById('lookupInput').value = '';
+            document.getElementById('lookupResult').innerHTML = '';
+        }
+
+        function populateReference() {
+            const container = document.getElementById('colorReference');
+            const levels = ['Primary', 'Secondary', 'Tertiary', 'Quaternary', 'Quinary'];
+
+            let html = '';
+            levels.forEach(level => {
+                const levelColors = Object.entries(colors).filter(([_, c]) => c.level === level);
+                if (levelColors.length > 0) {
+                    html += `<h3 style="margin-top: 20px; margin-bottom: 10px; color: #667eea;">${level} Colors (${levelColors.length})</h3>`;
+                    html += '<div class="color-grid">';
+                    levelColors.forEach(([name, c]) => {
+                        const rgb = rybToRgb(c.b, c.r, c.y);
+                        const hex = rgbToHex(rgb);
+                        html += `
+                            <div class="color-card">
+                                <div class="color-card-header">
+                                    <div class="color-card-swatch" style="background-color: ${hex};"></div>
+                                    <div class="color-card-name">${name}</div>
+                                </div>
+                                <div class="color-card-coord">[${c.b}, ${c.r}, ${c.y}]</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Initialize
+        populateReference();
+
+        // Allow Enter key to submit
+        document.getElementById('mixInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') processOperation();
+        });
+        document.getElementById('lookupInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') lookupColor();
+        });
+    </script>
+</body>
+</html>
