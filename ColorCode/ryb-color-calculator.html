@@ -474,10 +474,37 @@
         }
 
         function addColors(c1, c2) {
+            // Find the GCD to determine number of parts vs base composition
+            const parts1 = gcd(gcd(c1.r, c1.y), c1.b) || 1;
+            const parts2 = gcd(gcd(c2.r, c2.y), c2.b) || 1;
+
+            // Get base composition by dividing by parts
+            const base1_r = c1.r / parts1;
+            const base1_y = c1.y / parts1;
+            const base1_b = c1.b / parts1;
+
+            const base2_r = c2.r / parts2;
+            const base2_y = c2.y / parts2;
+            const base2_b = c2.b / parts2;
+
+            // Calculate total mass of base compositions
+            const totalBase1 = base1_r + base1_y + base1_b;
+            const totalBase2 = base2_r + base2_y + base2_b;
+
+            // Calculate contribution from each color (parts × base_composition / total_base)
+            const contrib1_r = totalBase1 > 0 ? parts1 * base1_r / totalBase1 : 0;
+            const contrib1_y = totalBase1 > 0 ? parts1 * base1_y / totalBase1 : 0;
+            const contrib1_b = totalBase1 > 0 ? parts1 * base1_b / totalBase1 : 0;
+
+            const contrib2_r = totalBase2 > 0 ? parts2 * base2_r / totalBase2 : 0;
+            const contrib2_y = totalBase2 > 0 ? parts2 * base2_y / totalBase2 : 0;
+            const contrib2_b = totalBase2 > 0 ? parts2 * base2_b / totalBase2 : 0;
+
+            // Add contributions
             return {
-                b: c1.b + c2.b,
-                r: c1.r + c2.r,
-                y: c1.y + c2.y
+                r: contrib1_r + contrib2_r,
+                y: contrib1_y + contrib2_y,
+                b: contrib1_b + contrib2_b
             };
         }
 
