@@ -509,33 +509,63 @@
         }
 
         function subtractColors(from, subtract) {
-            // Calculate total parts
-            const totalParts = from.b + from.r + from.y + subtract.b + subtract.r + subtract.y;
+            // Extract number of parts using GCD
+            const partsFrom = gcd(gcd(from.r, from.y), from.b) || 1;
+            const partsSubtract = gcd(gcd(subtract.r, subtract.y), subtract.b) || 1;
 
-            // Multiply 'from' color by total parts
+            // Total parts in the mixture
+            const totalParts = partsFrom + partsSubtract;
+
+            // Get base composition by dividing by parts
+            const baseFrom_r = from.r / partsFrom;
+            const baseFrom_y = from.y / partsFrom;
+            const baseFrom_b = from.b / partsFrom;
+
+            const baseSubtract_r = subtract.r / partsSubtract;
+            const baseSubtract_y = subtract.y / partsSubtract;
+            const baseSubtract_b = subtract.b / partsSubtract;
+
+            // Expand 'from' color by multiplying base by total parts
             const expanded = {
-                b: from.b * totalParts,
-                r: from.r * totalParts,
-                y: from.y * totalParts
+                r: baseFrom_r * totalParts,
+                y: baseFrom_y * totalParts,
+                b: baseFrom_b * totalParts
             };
 
-            // Calculate required percentage
-            const subtractTotal = subtract.b + subtract.r + subtract.y;
-            const requiredPercent = subtractTotal / totalParts;
+            // Calculate m% = parts being removed / total parts
+            const m_percent = partsSubtract / totalParts;
 
-            // Check each component
+            // Calculate total mass of expanded color
+            const totalMass = expanded.r + expanded.y + expanded.b;
+
+            // Check if each component being subtracted is at least m% of the expanded color
             const checks = [];
-            if (subtract.b > 0) {
-                const actualPercent = expanded.b / (expanded.b + expanded.r + expanded.y);
-                checks.push({ color: 'Blue', required: requiredPercent, actual: actualPercent, ok: actualPercent >= requiredPercent });
+            if (baseSubtract_r > 0) {
+                const actualPercent = expanded.r / totalMass;
+                checks.push({
+                    color: 'Red',
+                    required: m_percent,
+                    actual: actualPercent,
+                    ok: actualPercent >= m_percent
+                });
             }
-            if (subtract.r > 0) {
-                const actualPercent = expanded.r / (expanded.b + expanded.r + expanded.y);
-                checks.push({ color: 'Red', required: requiredPercent, actual: actualPercent, ok: actualPercent >= requiredPercent });
+            if (baseSubtract_y > 0) {
+                const actualPercent = expanded.y / totalMass;
+                checks.push({
+                    color: 'Yellow',
+                    required: m_percent,
+                    actual: actualPercent,
+                    ok: actualPercent >= m_percent
+                });
             }
-            if (subtract.y > 0) {
-                const actualPercent = expanded.y / (expanded.b + expanded.r + expanded.y);
-                checks.push({ color: 'Yellow', required: requiredPercent, actual: actualPercent, ok: actualPercent >= requiredPercent });
+            if (baseSubtract_b > 0) {
+                const actualPercent = expanded.b / totalMass;
+                checks.push({
+                    color: 'Blue',
+                    required: m_percent,
+                    actual: actualPercent,
+                    ok: actualPercent >= m_percent
+                });
             }
 
             const allOk = checks.every(c => c.ok);
@@ -543,11 +573,15 @@
                 return { error: 'NOT POSSIBLE - insufficient color to subtract' };
             }
 
-            // Perform subtraction
+            // Calculate mass to remove: m% of total mass, with composition matching what we're subtracting
+            const massToRemove = m_percent * totalMass;
+            const baseTotalSubtract = baseSubtract_r + baseSubtract_y + baseSubtract_b;
+
+            // Remove mass with same composition as 'subtract'
             const result = {
-                b: expanded.b - (subtract.b * totalParts),
-                r: expanded.r - (subtract.r * totalParts),
-                y: expanded.y - (subtract.y * totalParts)
+                r: expanded.r - (massToRemove * baseSubtract_r / baseTotalSubtract),
+                y: expanded.y - (massToRemove * baseSubtract_y / baseTotalSubtract),
+                b: expanded.b - (massToRemove * baseSubtract_b / baseTotalSubtract)
             };
 
             return simplifyRatio(result.r, result.y, result.b);
