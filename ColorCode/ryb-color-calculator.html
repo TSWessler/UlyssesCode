@@ -251,12 +251,14 @@
                     <strong>Examples:</strong>
                     Blue + Red<br>
                     2 Blue + 1 Violet<br>
+                    Blue + Blue + Blue + Red<br>
+                    Red + Yellow + Blue (= Brown)<br>
                     Purple - Blue<br>
                     Violet - 2 Blue
                 </div>
                 <div class="input-group">
-                    <label for="mixInput">Enter color operation:</label>
-                    <input type="text" id="mixInput" placeholder="e.g., Blue + Red or Violet - 2 Blue">
+                    <label for="mixInput">Enter color operation (supports multiple + and -):</label>
+                    <input type="text" id="mixInput" placeholder="e.g., Blue + Red or Blue + Blue + Red">
                 </div>
                 <div class="button-group">
                     <button onclick="processOperation()">Calculate</button>
@@ -299,10 +301,11 @@
             'Yellow': { r: 0, y: 1, b: 0, level: 'Primary' },
             'Blue': { r: 0, y: 0, b: 1, level: 'Primary' },
 
-            // Secondary (3)
+            // Secondary (4)
             'Orange': { r: 1, y: 1, b: 0, level: 'Secondary' },
             'Green': { r: 0, y: 1, b: 1, level: 'Secondary' },
             'Purple': { r: 1, y: 0, b: 1, level: 'Secondary' },
+            'Brown': { r: 1, y: 1, b: 1, level: 'Secondary' },
 
             // Tertiary (6) - Wikipedia standard
             'Vermilion': { r: 3, y: 1, b: 0, level: 'Tertiary' },
@@ -430,27 +433,53 @@
         function parseOperation(input) {
             input = input.trim();
 
-            // Parse addition (e.g., "2 Blue + 1 Violet")
-            const addMatch = input.match(/^(.+?)\s*\+\s*(.+)$/);
-            if (addMatch) {
-                return {
-                    operation: 'add',
-                    left: parseColorTerm(addMatch[1].trim()),
-                    right: parseColorTerm(addMatch[2].trim())
-                };
+            // Split by + and - while preserving the operators
+            const tokens = [];
+            let currentTerm = '';
+            let inBrackets = 0;
+
+            for (let i = 0; i < input.length; i++) {
+                const char = input[i];
+
+                if (char === '[') inBrackets++;
+                if (char === ']') inBrackets--;
+
+                if ((char === '+' || char === '-') && inBrackets === 0 && i > 0) {
+                    // Found an operator outside brackets
+                    tokens.push({ type: 'term', value: currentTerm.trim() });
+                    tokens.push({ type: 'operator', value: char });
+                    currentTerm = '';
+                } else {
+                    currentTerm += char;
+                }
             }
 
-            // Parse subtraction
-            const subMatch = input.match(/^(.+?)\s*-\s*(.+)$/);
-            if (subMatch) {
-                return {
-                    operation: 'subtract',
-                    left: parseColorTerm(subMatch[1].trim()),
-                    right: parseColorTerm(subMatch[2].trim())
-                };
+            // Add the last term
+            if (currentTerm.trim()) {
+                tokens.push({ type: 'term', value: currentTerm.trim() });
             }
 
-            return null;
+            // Must have at least one term and one operator
+            if (tokens.length < 3) {
+                return null;
+            }
+
+            // Parse all color terms
+            const operations = [];
+            for (let i = 0; i < tokens.length; i++) {
+                if (tokens[i].type === 'term') {
+                    const color = parseColorTerm(tokens[i].value);
+                    if (!color) return null;
+                    operations.push({ type: 'color', color });
+                } else if (tokens[i].type === 'operator') {
+                    operations.push({
+                        type: 'operator',
+                        operator: tokens[i].value === '+' ? 'add' : 'subtract'
+                    });
+                }
+            }
+
+            return operations;
         }
 
         function parseColorTerm(term) {
@@ -656,28 +685,37 @@
             const input = document.getElementById('mixInput').value;
             const result = document.getElementById('mixResult');
 
-            const operation = parseOperation(input);
-            if (!operation) {
+            const operations = parseOperation(input);
+            if (!operations) {
                 result.innerHTML = `
                     <div class="result error">
                         <h3>Error</h3>
-                        <p>Invalid operation. Use format: "Blue + Red" or "Violet - 2 Blue"</p>
+                        <p>Invalid operation. Use format: "Blue + Red" or "Blue + Blue + Red"</p>
                     </div>
                 `;
                 return;
             }
 
-            let finalResult;
-            if (operation.operation === 'add') {
-                const sum = addColors(operation.left, operation.right);
-                finalResult = identifyColor(sum.r, sum.y, sum.b);
-            } else {
-                finalResult = subtractColors(operation.left, operation.right);
-                if (!finalResult.error) {
-                    finalResult = identifyColor(finalResult.r, finalResult.y, finalResult.b);
+            // Process operations left to right
+            let currentColor = operations[0].color;
+
+            for (let i = 1; i < operations.length; i += 2) {
+                const operator = operations[i];
+                const nextColor = operations[i + 1].color;
+
+                if (operator.operator === 'add') {
+                    currentColor = addColors(currentColor, nextColor);
+                } else {
+                    currentColor = subtractColors(currentColor, nextColor);
+                    if (currentColor.error) {
+                        displayResult(result, currentColor);
+                        return;
+                    }
                 }
             }
 
+            // Identify the final color
+            const finalResult = identifyColor(currentColor.r, currentColor.y, currentColor.b);
             displayResult(result, finalResult);
         }
 
