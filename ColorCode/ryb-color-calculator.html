@@ -503,31 +503,29 @@
         }
 
         function addColors(c1, c2) {
-            // Find the GCD to determine number of parts vs base composition
-            const parts1 = gcd(gcd(c1.r, c1.y), c1.b) || 1;
-            const parts2 = gcd(gcd(c2.r, c2.y), c2.b) || 1;
+            // Use total mass (sum of coordinates) to determine amount of paint
+            // This correctly handles both user input and intermediate results
+            const mass1 = c1.r + c1.y + c1.b;
+            const mass2 = c2.r + c2.y + c2.b;
 
-            // Get base composition by dividing by parts
-            const base1_r = c1.r / parts1;
-            const base1_y = c1.y / parts1;
-            const base1_b = c1.b / parts1;
+            // Normalize each color by its total mass to get composition per unit
+            const norm1_r = mass1 > 0 ? c1.r / mass1 : 0;
+            const norm1_y = mass1 > 0 ? c1.y / mass1 : 0;
+            const norm1_b = mass1 > 0 ? c1.b / mass1 : 0;
 
-            const base2_r = c2.r / parts2;
-            const base2_y = c2.y / parts2;
-            const base2_b = c2.b / parts2;
+            const norm2_r = mass2 > 0 ? c2.r / mass2 : 0;
+            const norm2_y = mass2 > 0 ? c2.y / mass2 : 0;
+            const norm2_b = mass2 > 0 ? c2.b / mass2 : 0;
 
-            // Calculate total mass of base compositions
-            const totalBase1 = base1_r + base1_y + base1_b;
-            const totalBase2 = base2_r + base2_y + base2_b;
+            // Each color contributes: mass × normalized_composition
+            // This gives equal weight to each color by mass
+            const contrib1_r = mass1 * norm1_r;
+            const contrib1_y = mass1 * norm1_y;
+            const contrib1_b = mass1 * norm1_b;
 
-            // Calculate contribution from each color (parts × base_composition / total_base)
-            const contrib1_r = totalBase1 > 0 ? parts1 * base1_r / totalBase1 : 0;
-            const contrib1_y = totalBase1 > 0 ? parts1 * base1_y / totalBase1 : 0;
-            const contrib1_b = totalBase1 > 0 ? parts1 * base1_b / totalBase1 : 0;
-
-            const contrib2_r = totalBase2 > 0 ? parts2 * base2_r / totalBase2 : 0;
-            const contrib2_y = totalBase2 > 0 ? parts2 * base2_y / totalBase2 : 0;
-            const contrib2_b = totalBase2 > 0 ? parts2 * base2_b / totalBase2 : 0;
+            const contrib2_r = mass2 * norm2_r;
+            const contrib2_y = mass2 * norm2_y;
+            const contrib2_b = mass2 * norm2_b;
 
             // Add contributions
             return {
