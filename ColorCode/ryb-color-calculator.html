@@ -294,24 +294,25 @@
 <body>
     <div class="container">
         <header>
-            <h1>Paint Color Mixer</h1>
+            <h1>Paint Color Mixer (and Un-Mixer)</h1>
             <h2>RYB Color Theory Calculator</h2>
         </header>
 
         <div class="main-content">
             <div class="section" style="grid-column: 1 / -1;">
                 <h2>Mix and "Un-Mix" Colors</h2>
+                <p style="margin-bottom: 15px;">Think of this webpage as the palette that you mix colors on and the calculator tells you what colors you get out afterward. See bottom for more information and full examples.</p>
                 <div class="help-text">
                     <strong>Mixing Examples:</strong>
-                    Blue + Red, [1,0,1] + [0,0,1], 2 Blue + 1 Violet, Red + Yellow + Blue (= Brown)<br>
+                    Purple + 3 Blue, [1,0,1] + [0,0,1]<br>
                     <strong>Un-Mixing Examples:</strong>
-                    Purple - Blue, Violet - 2 Blue<br>
+                    Brown - 0.5 Green, [2,1,1] - [1,0,0]<br>
                     <strong>Lookup Examples:</strong>
-                    Brown, Persimmon-Orange, [1,0,1], [1.5, 2.3, 1.0]
+                    Persimmon-Orange, [1.5, 2.3, 1.0]
                 </div>
                 <div class="input-group">
-                    <label for="mixInput">Enter color operation or lookup (supports +, -, color names, and coordinates):</label>
-                    <input type="text" id="mixInput" placeholder="e.g., Blue + Red, Purple - Blue, or just Brown">
+                    <label for="mixInput">Enter color operation or lookup:</label>
+                    <input type="text" id="mixInput" placeholder="e.g., Purple + 3 Blue, Brown - 0.5 Green, or Persimmon-Orange">
                 </div>
                 <div class="button-group">
                     <button onclick="processOperation()">Calculate</button>
@@ -328,18 +329,19 @@
             <div class="section reference">
                 <h2>How to Use This Tool</h2>
                 <div>
-                    <p>Think of this webpage as the palette that you mix colors on and the calculator tells you what colors you get out afterward.</p>
+                    <p><strong>Note:</strong> Colors are defined by their relative proportions, so [1,0,1] appears the same color (purple) as [2,0,2], with the difference being how much "paint" there is on the palette.</p>
 
                     <h3>Mixing Colors</h3>
-                    <p><strong>Example 1:</strong> Green + Chartreuse = Lime (assumes equal proportions)</p>
+                    <p>Every A + B mixture assumes equal "mass" of A and B; an A + 2 B mixture means that there is twice as much mass in B being mixed with A (2 "portions" of B and 1 "portion" of A). For a whole portion, all of the components add up to 1; e.g., 1 portion of Violet can be normalized to be [1/8,0,7/8].</p>
+                    <p><strong>Example 1:</strong> Green + Chartreuse = [0,1,1] + [0,3,1] = [0,1/2,1/2] + [0,3/4,1/4] = [0,5/4,3/4] = [0,5,3] = Lime</p>
                     <p><strong>Example 2:</strong> 3 Blue + Red = Violet = Blue + Blue + Blue + Red</p>
-                    <p><strong>Example 3:</strong> 2 Orange + Blue = Brown</p>
+                    <p><strong>Example 3:</strong> 2 Orange + Blue = 2 [1/2,1/2,0] + [0,0,1] = [2,2,0] + [0,0,2] = [2,2,2] = [1,1,1] = Brown</p>
 
                     <h3>Un-Mixing Colors</h3>
-                    <p>This tool also allows for "un-mixing"—this is the OPPOSITE of mixing:</p>
-                    <p><strong>Example 1:</strong> Blue + Red = Purple, SO… Purple - Blue = Red</p>
-                    <p><strong>Example 2:</strong> Violet - Blue = Purple</p>
-                    <p><strong>Example 3:</strong> Violet - Red = IMPOSSIBLE (since what + red = Violet? There is no such color! The question implies equal parts BLANK + Red = Violet.)</p>
+                    <p>This tool also allows for "un-mixing"—this is the OPPOSITE of mixing. Note that for A + B = C, 1 portion of A plus 1 portion of B leads to 2 portions of C, and A + 2 B = C means that C has 3 "portions" of mass. So, C - B = A implies that C has 2 portions, and C - 2B = A implies that C has 3 units of mass.</p>
+                    <p><strong>Example 1:</strong> Blue + Red = Purple, so… Purple - Blue = Red</p>
+                    <p><strong>Example 2:</strong> Violet - Blue = [1/2,0,3/2] - [0,0,1] = [1/2,0,1/2] = [1,0,1] = Purple</p>
+                    <p><strong>Example 3:</strong> Violet - Red = IMPOSSIBLE (since 1 portion of what + 1 portion of red = Violet? There is no such color!)</p>
 
                     <h3>Other Features</h3>
                     <p>• The calculator supports "names" of colors along with coordinates, so [0,0,1]+[1,0,0] is equivalent to Blue + Red.</p>
