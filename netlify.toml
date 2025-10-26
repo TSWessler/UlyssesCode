@@ -1,8 +1,8 @@
 [build]
-  # This is the Paint Color Mixer app in the ColorCode directory
+  # This is the Paint Color Calculator app in the ColorCode directory
   publish = "ColorCode"
 
 [[redirects]]
   from = "/*"
-  to = "/color-mixer.html"
+  to = "/ryb-color-calculator.html"
   status = 200
