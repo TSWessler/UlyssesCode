@@ -526,16 +526,189 @@
             }).join('');
         }
 
+        // ============================================
+        // FRACTION ARITHMETIC SYSTEM
+        // ============================================
+        
+        class Fraction {
+            constructor(numerator, denominator = 1) {
+                if (denominator === 0) {
+                    throw new Error('Denominator cannot be zero');
+                }
+                
+                // Handle negative denominators
+                if (denominator < 0) {
+                    numerator = -numerator;
+                    denominator = -denominator;
+                }
+                
+                // Simplify immediately
+                const g = Fraction.gcd(Math.abs(numerator), Math.abs(denominator));
+                this.num = numerator / g;
+                this.den = denominator / g;
+            }
+            
+            static gcd(a, b) {
+                a = Math.floor(Math.abs(a));
+                b = Math.floor(Math.abs(b));
+                while (b !== 0) {
+                    const temp = b;
+                    b = a % b;
+                    a = temp;
+                }
+                return a || 1;
+            }
+            
+            static lcm(a, b) {
+                return Math.abs(a * b) / Fraction.gcd(a, b);
+            }
+            
+            // Convert decimal to fraction with reasonable precision
+            static fromDecimal(decimal) {
+                const precision = 1000000;
+                const num = Math.round(decimal * precision);
+                return new Fraction(num, precision);
+            }
+            
+            // Parse fraction string like "1/3" or decimal like "0.5"
+            static parse(str) {
+                str = str.trim();
+                
+                // Check for fraction notation "1/3"
+                const fractionMatch = str.match(/^(-?\d+)\s*\/\s*(\d+)$/);
+                if (fractionMatch) {
+                    return new Fraction(parseInt(fractionMatch[1]), parseInt(fractionMatch[2]));
+                }
+                
+                // Check for decimal
+                const decimal = parseFloat(str);
+                if (!isNaN(decimal)) {
+                    return Fraction.fromDecimal(decimal);
+                }
+                
+                return null;
+            }
+            
+            add(other) {
+                const newDen = Fraction.lcm(this.den, other.den);
+                const newNum = this.num * (newDen / this.den) + other.num * (newDen / other.den);
+                return new Fraction(newNum, newDen);
+            }
+            
+            subtract(other) {
+                const newDen = Fraction.lcm(this.den, other.den);
+                const newNum = this.num * (newDen / this.den) - other.num * (newDen / other.den);
+                return new Fraction(newNum, newDen);
+            }
+            
+            multiply(other) {
+                return new Fraction(this.num * other.num, this.den * other.den);
+            }
+            
+            divide(other) {
+                return new Fraction(this.num * other.den, this.den * other.num);
+            }
+            
+            toDecimal() {
+                return this.num / this.den;
+            }
+            
+            toString() {
+                if (this.den === 1) return `${this.num}`;
+                return `${this.num}/${this.den}`;
+            }
+            
+            equals(other) {
+                return this.num === other.num && this.den === other.den;
+            }
+            
+            isZero() {
+                return this.num === 0;
+            }
+        }
+        
+        // Color represented as fractions
+        class FractionColor {
+            constructor(r, y, b) {
+                this.r = r instanceof Fraction ? r : new Fraction(r);
+                this.y = y instanceof Fraction ? y : new Fraction(y);
+                this.b = b instanceof Fraction ? b : new Fraction(b);
+            }
+            
+            // Convert to simple ratio for display [r, y, b]
+            toRatio() {
+                // Find common denominator
+                const commonDen = Fraction.lcm(
+                    Fraction.lcm(this.r.den, this.y.den),
+                    this.b.den
+                );
+                
+                const r_scaled = this.r.num * (commonDen / this.r.den);
+                const y_scaled = this.y.num * (commonDen / this.y.den);
+                const b_scaled = this.b.num * (commonDen / this.b.den);
+                
+                // Simplify by GCD
+                const g = Fraction.gcd(Fraction.gcd(Math.abs(r_scaled), Math.abs(y_scaled)), Math.abs(b_scaled));
+                
+                return {
+                    r: r_scaled / g,
+                    y: y_scaled / g,
+                    b: b_scaled / g
+                };
+            }
+            
+            add(other) {
+                return new FractionColor(
+                    this.r.add(other.r),
+                    this.y.add(other.y),
+                    this.b.add(other.b)
+                );
+            }
+            
+            subtract(other) {
+                return new FractionColor(
+                    this.r.subtract(other.r),
+                    this.y.subtract(other.y),
+                    this.b.subtract(other.b)
+                );
+            }
+            
+            multiply(fraction) {
+                if (!(fraction instanceof Fraction)) {
+                    fraction = new Fraction(fraction);
+                }
+                return new FractionColor(
+                    this.r.multiply(fraction),
+                    this.y.multiply(fraction),
+                    this.b.multiply(fraction)
+                );
+            }
+        }
+
         function gcd(a, b) {
             return b === 0 ? a : gcd(b, a % b);
         }
 
         function simplifyRatio(r, y, b) {
-            const divisor = gcd(gcd(r, y), b);
+            // Convert to integers by finding a common multiplier
+            // This handles cases like [1.5, 2.5, 0] -> [3, 5, 0]
+            const precision = 1000000; // Handle up to 6 decimal places
+            let r_int = Math.round(r * precision);
+            let y_int = Math.round(y * precision);
+            let b_int = Math.round(b * precision);
+            
+            // Find GCD of the integer versions
+            const divisor = gcd(gcd(r_int, y_int), b_int);
+            
+            // Simplify
+            r_int = r_int / divisor;
+            y_int = y_int / divisor;
+            b_int = b_int / divisor;
+            
             return {
-                r: r / divisor,
-                y: y / divisor,
-                b: b / divisor
+                r: r_int,
+                y: y_int,
+                b: b_int
             };
         }
 
@@ -702,140 +875,86 @@
         function parseColorTerm(term) {
             term = term.trim();
 
-            // Check for multiplier (e.g., "2 Blue")
-            const multMatch = term.match(/^(\d+(?:\.\d+)?)\s+(.+)$/);
-            if (multMatch) {
-                const multiplier = parseFloat(multMatch[1]);
-                const color = parseColorInput(multMatch[2]);
+            // Check for fraction multiplier (e.g., "1/3 Blue", "2/5 Yellow")
+            const fracMatch = term.match(/^(-?\d+)\s*\/\s*(\d+)\s+(.+)$/);
+            if (fracMatch) {
+                const multiplier = new Fraction(parseInt(fracMatch[1]), parseInt(fracMatch[2]));
+                const color = parseColorInput(fracMatch[3]);
                 if (color) {
-                    return {
-                        r: color.r * multiplier,
-                        y: color.y * multiplier,
-                        b: color.b * multiplier
-                    };
+                    // Convert color to FractionColor and multiply
+                    const fracColor = new FractionColor(color.r, color.y, color.b);
+                    const result = fracColor.multiply(multiplier);
+                    return result;
                 }
             }
 
-            return parseColorInput(term);
+            // Check for decimal multiplier (e.g., "2 Blue", "0.5 Red")
+            const multMatch = term.match(/^(\d+(?:\.\d+)?)\s+(.+)$/);
+            if (multMatch) {
+                const multiplier = Fraction.fromDecimal(parseFloat(multMatch[1]));
+                const color = parseColorInput(multMatch[2]);
+                if (color) {
+                    // Convert color to FractionColor and multiply
+                    const fracColor = new FractionColor(color.r, color.y, color.b);
+                    const result = fracColor.multiply(multiplier);
+                    return result;
+                }
+            }
+
+            // No multiplier - just parse the color
+            const color = parseColorInput(term);
+            if (color) {
+                return new FractionColor(color.r, color.y, color.b);
+            }
+            
+            return null;
         }
 
         function addColors(c1, c2) {
-            // Find the GCD to determine number of parts
-            const parts1 = gcd(gcd(c1.r, c1.y), c1.b) || 1;
-            const parts2 = gcd(gcd(c2.r, c2.y), c2.b) || 1;
-
-            // Get base composition of one part by dividing by GCD
-            const base1_r = c1.r / parts1;
-            const base1_y = c1.y / parts1;
-            const base1_b = c1.b / parts1;
-
-            const base2_r = c2.r / parts2;
-            const base2_y = c2.y / parts2;
-            const base2_b = c2.b / parts2;
-
-            // Calculate total mass of one part's base composition
-            const totalBase1 = base1_r + base1_y + base1_b;
-            const totalBase2 = base2_r + base2_y + base2_b;
-
-            // Normalize each part to mass 1, then multiply by number of parts
-            // This gives equal weight per part when mixing
-            const contrib1_r = totalBase1 > 0 ? parts1 * base1_r / totalBase1 : 0;
-            const contrib1_y = totalBase1 > 0 ? parts1 * base1_y / totalBase1 : 0;
-            const contrib1_b = totalBase1 > 0 ? parts1 * base1_b / totalBase1 : 0;
-
-            const contrib2_r = totalBase2 > 0 ? parts2 * base2_r / totalBase2 : 0;
-            const contrib2_y = totalBase2 > 0 ? parts2 * base2_y / totalBase2 : 0;
-            const contrib2_b = totalBase2 > 0 ? parts2 * base2_b / totalBase2 : 0;
-
-            // Add contributions
-            return {
-                r: contrib1_r + contrib2_r,
-                y: contrib1_y + contrib2_y,
-                b: contrib1_b + contrib2_b
-            };
+            // FractionColor addition using fraction arithmetic
+            return c1.add(c2);
         }
 
         function subtractColors(from, subtract) {
-            // Extract number of parts using GCD
-            const partsFrom = gcd(gcd(from.r, from.y), from.b) || 1;
-            const partsSubtract = gcd(gcd(subtract.r, subtract.y), subtract.b) || 1;
-
-            // Total parts in the mixture
-            const totalParts = partsFrom + partsSubtract;
-
-            // Get base composition by dividing by parts
-            const baseFrom_r = from.r / partsFrom;
-            const baseFrom_y = from.y / partsFrom;
-            const baseFrom_b = from.b / partsFrom;
-
-            const baseSubtract_r = subtract.r / partsSubtract;
-            const baseSubtract_y = subtract.y / partsSubtract;
-            const baseSubtract_b = subtract.b / partsSubtract;
-
-            // Expand 'from' color by multiplying base by total parts
-            const expanded = {
-                r: baseFrom_r * totalParts,
-                y: baseFrom_y * totalParts,
-                b: baseFrom_b * totalParts
-            };
-
-            // Calculate m% = parts being removed / total parts
-            const m_percent = partsSubtract / totalParts;
-
-            // Calculate total mass of expanded color
-            const totalMass = expanded.r + expanded.y + expanded.b;
-
-            // Calculate mass to remove: m% of total mass, with composition matching what we're subtracting
-            const massToRemove = m_percent * totalMass;
-            const baseTotalSubtract = baseSubtract_r + baseSubtract_y + baseSubtract_b;
-
-            // Check if we have enough of each component to remove what's needed
-            const checks = [];
-            if (baseSubtract_r > 0) {
-                const amountToRemove = (baseSubtract_r / baseTotalSubtract) * massToRemove;
-                checks.push({
-                    color: 'Red',
-                    needed: amountToRemove,
-                    available: expanded.r,
-                    ok: expanded.r >= amountToRemove - 0.0001  // small epsilon for floating point
-                });
-            }
-            if (baseSubtract_y > 0) {
-                const amountToRemove = (baseSubtract_y / baseTotalSubtract) * massToRemove;
-                checks.push({
-                    color: 'Yellow',
-                    needed: amountToRemove,
-                    available: expanded.y,
-                    ok: expanded.y >= amountToRemove - 0.0001
-                });
-            }
-            if (baseSubtract_b > 0) {
-                const amountToRemove = (baseSubtract_b / baseTotalSubtract) * massToRemove;
-                checks.push({
-                    color: 'Blue',
-                    needed: amountToRemove,
-                    available: expanded.b,
-                    ok: expanded.b >= amountToRemove - 0.0001
-                });
-            }
-
-            const allOk = checks.every(c => c.ok);
-            if (!allOk) {
+            // Calculate the total mass of each color
+            const fromMass = from.r.add(from.y).add(from.b);
+            const subtractMass = subtract.r.add(subtract.y).add(subtract.b);
+            
+            // Calculate the total mass after subtraction
+            const totalMass = fromMass.add(subtractMass);
+            
+            // Calculate the fraction to remove: subtractMass / totalMass
+            const fractionToRemove = subtractMass.divide(totalMass);
+            
+            // Expand 'from' color by multiplying by totalMass/fromMass
+            const expansionFactor = totalMass.divide(fromMass);
+            const expanded = from.multiply(expansionFactor);
+            
+            // Calculate mass to remove from each component
+            // This should match the composition of 'subtract'
+            const subtractNormMass = subtract.r.add(subtract.y).add(subtract.b);
+            
+            // For each component, remove proportional amount
+            const toRemoveR = subtract.r.divide(subtractNormMass).multiply(fractionToRemove).multiply(totalMass);
+            const toRemoveY = subtract.y.divide(subtractNormMass).multiply(fractionToRemove).multiply(totalMass);
+            const toRemoveB = subtract.b.divide(subtractNormMass).multiply(fractionToRemove).multiply(totalMass);
+            
+            // Check if we have enough of each component
+            const resultR = expanded.r.subtract(toRemoveR);
+            const resultY = expanded.y.subtract(toRemoveY);
+            const resultB = expanded.b.subtract(toRemoveB);
+            
+            // Check for negative results
+            if (resultR.num < 0 || resultY.num < 0 || resultB.num < 0) {
                 return { error: 'NOT POSSIBLE - insufficient color to subtract' };
             }
-
-            // Remove mass with same composition as 'subtract'
-            const result = {
-                r: expanded.r - (massToRemove * baseSubtract_r / baseTotalSubtract),
-                y: expanded.y - (massToRemove * baseSubtract_y / baseTotalSubtract),
-                b: expanded.b - (massToRemove * baseSubtract_b / baseTotalSubtract)
-            };
-
-            return simplifyRatio(result.r, result.y, result.b);
+            
+            return new FractionColor(resultR, resultY, resultB);
         }
 
-        function identifyColor(r, y, b) {
-            const simplified = simplifyRatio(r, y, b);
+        function identifyColor(fracColor) {
+            // Convert FractionColor to simple ratio
+            const simplified = fracColor.toRatio();
 
             // Check for exact match
             for (let name in colors) {
@@ -1052,7 +1171,7 @@
             // If only one term, it's a lookup
             if (operations.length === 1) {
                 const color = operations[0].color;
-                const identified = identifyColor(color.r, color.y, color.b);
+                const identified = identifyColor(color);
                 displayResult(result, identified);
                 return;
             }
@@ -1087,7 +1206,7 @@
             }
 
             // Identify the final color
-            const finalResult = identifyColor(currentColor.r, currentColor.y, currentColor.b);
+            const finalResult = identifyColor(currentColor);
             displayResult(result, finalResult);
         }
 
