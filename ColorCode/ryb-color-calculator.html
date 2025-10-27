@@ -881,9 +881,10 @@
                 const multiplier = new Fraction(parseInt(fracMatch[1]), parseInt(fracMatch[2]));
                 const color = parseColorInput(fracMatch[3]);
                 if (color) {
-                    // Convert color to FractionColor and multiply
+                    // Normalize color to mass 1, then multiply
                     const fracColor = new FractionColor(color.r, color.y, color.b);
-                    const result = fracColor.multiply(multiplier);
+                    const normalized = normalizeToMassOne(fracColor);
+                    const result = normalized.multiply(multiplier);
                     return result;
                 }
             }
@@ -894,20 +895,36 @@
                 const multiplier = Fraction.fromDecimal(parseFloat(multMatch[1]));
                 const color = parseColorInput(multMatch[2]);
                 if (color) {
-                    // Convert color to FractionColor and multiply
+                    // Normalize color to mass 1, then multiply
                     const fracColor = new FractionColor(color.r, color.y, color.b);
-                    const result = fracColor.multiply(multiplier);
+                    const normalized = normalizeToMassOne(fracColor);
+                    const result = normalized.multiply(multiplier);
                     return result;
                 }
             }
 
-            // No multiplier - just parse the color
+            // No multiplier - color has mass 1 (normalized)
             const color = parseColorInput(term);
             if (color) {
-                return new FractionColor(color.r, color.y, color.b);
+                const fracColor = new FractionColor(color.r, color.y, color.b);
+                return normalizeToMassOne(fracColor);
             }
             
             return null;
+        }
+        
+        function normalizeToMassOne(fracColor) {
+            // Calculate total mass
+            const totalMass = fracColor.r.add(fracColor.y).add(fracColor.b);
+            
+            // If mass is already 1, return as-is
+            if (totalMass.num === totalMass.den) {
+                return fracColor;
+            }
+            
+            // Divide each component by total mass to get mass = 1
+            const oneOverMass = new Fraction(totalMass.den, totalMass.num);
+            return fracColor.multiply(oneOverMass);
         }
 
         function addColors(c1, c2) {
