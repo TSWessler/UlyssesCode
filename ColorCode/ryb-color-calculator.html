@@ -914,8 +914,18 @@
         }
         
         function normalizeToMassOne(fracColor) {
+            // Safety check
+            if (!fracColor || !fracColor.r || !fracColor.y || !fracColor.b) {
+                throw new Error('Invalid color object');
+            }
+            
             // Calculate total mass
             const totalMass = fracColor.r.add(fracColor.y).add(fracColor.b);
+            
+            // Check for zero mass (invalid color)
+            if (totalMass.num === 0) {
+                throw new Error('Color has zero mass [0,0,0]');
+            }
             
             // If mass is already 1, return as-is
             if (totalMass.num === totalMass.den) {
@@ -1162,69 +1172,81 @@
                 return;
             }
 
-            const operations = parseOperation(input);
-            if (!operations) {
-                result.innerHTML = `
-                    <div class="result error">
-                        <h3>Error</h3>
-                        <p>Invalid input. Please check your color names or coordinates.</p>
-                        <p>Examples: "Blue + Red", "[1,0,1] + [0,0,1]", "Brown", "Persimmon-Orange"</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Check if first color has an error
-            if (operations[0].color.error) {
-                result.innerHTML = `
-                    <div class="result error">
-                        <h3>Error</h3>
-                        <p>${operations[0].color.error}</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // If only one term, it's a lookup
-            if (operations.length === 1) {
-                const color = operations[0].color;
-                const identified = identifyColor(color);
-                displayResult(result, identified);
-                return;
-            }
-
-            // Process operations left to right
-            let currentColor = operations[0].color;
-
-            for (let i = 1; i < operations.length; i += 2) {
-                const operator = operations[i];
-                const nextColor = operations[i + 1].color;
-
-                // Check for errors in the next color
-                if (nextColor.error) {
+            try {
+                const operations = parseOperation(input);
+                if (!operations) {
                     result.innerHTML = `
                         <div class="result error">
                             <h3>Error</h3>
-                            <p>${nextColor.error}</p>
+                            <p>Invalid input. Please check your color names or coordinates.</p>
+                            <p>Examples: "Blue + Red", "[1,0,1] + [0,0,1]", "Brown", "Persimmon-Orange"</p>
                         </div>
                     `;
                     return;
                 }
 
-                if (operator.operator === 'add') {
-                    currentColor = addColors(currentColor, nextColor);
-                } else {
-                    currentColor = subtractColors(currentColor, nextColor);
-                    if (currentColor.error) {
-                        displayResult(result, currentColor);
+                // Check if first color has an error
+                if (operations[0].color.error) {
+                    result.innerHTML = `
+                        <div class="result error">
+                            <h3>Error</h3>
+                            <p>${operations[0].color.error}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // If only one term, it's a lookup
+                if (operations.length === 1) {
+                    const color = operations[0].color;
+                    const identified = identifyColor(color);
+                    displayResult(result, identified);
+                    return;
+                }
+
+                // Process operations left to right
+                let currentColor = operations[0].color;
+
+                for (let i = 1; i < operations.length; i += 2) {
+                    const operator = operations[i];
+                    const nextColor = operations[i + 1].color;
+
+                    // Check for errors in the next color
+                    if (nextColor.error) {
+                        result.innerHTML = `
+                            <div class="result error">
+                                <h3>Error</h3>
+                                <p>${nextColor.error}</p>
+                            </div>
+                        `;
                         return;
                     }
-                }
-            }
 
-            // Identify the final color
-            const finalResult = identifyColor(currentColor);
-            displayResult(result, finalResult);
+                    if (operator.operator === 'add') {
+                        currentColor = addColors(currentColor, nextColor);
+                    } else {
+                        currentColor = subtractColors(currentColor, nextColor);
+                        if (currentColor.error) {
+                            displayResult(result, currentColor);
+                            return;
+                        }
+                    }
+                }
+
+                // Identify the final color
+                const finalResult = identifyColor(currentColor);
+                displayResult(result, finalResult);
+            } catch (error) {
+                console.error('Error processing operation:', error);
+                result.innerHTML = `
+                    <div class="result error">
+                        <h3>Error</h3>
+                        <p>Something went wrong processing your input. Please try again.</p>
+                        <p>Error details: ${error.message}</p>
+                        <p>Examples: "Blue + Red", "[1,0,1] + [0,0,1]", "Brown", "1/3 Yellow"</p>
+                    </div>
+                `;
+            }
         }
 
         function clearMix() {
