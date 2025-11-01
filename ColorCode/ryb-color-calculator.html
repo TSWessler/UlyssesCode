@@ -279,6 +279,15 @@
             margin-bottom: 5px;
         }
 
+        .impossible-notice {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -300,16 +309,12 @@
         <div class="main-content">
             <div class="section" style="grid-column: 1 / -1;">
                 <h2>Mix and "Un-Mix" Colors</h2>
-                <p style="margin-bottom: 15px;">Think of this webpage as the palette that you mix colors on and the calculator tells you what colors you get out afterward. See bottom for more information and full examples.</p>
+                <p style="margin-bottom: 15px;">Think of this webpage as the palette you mix paint on and the calculator tells you what colors you get out afterward. See bottom for more information and full examples.</p>
                 <div class="help-text">
-                    <strong>Mixing Examples:</strong>
-                    Purple + 3 Blue, [1,0,1] + [0,0,1], 2*Brown + Lemon<br>
-                    <strong>Un-Mixing Examples:</strong>
-                    Brown - 0.5 Green, [2,1,1] - [1,0,0], Red - 1/3 Red<br>
-                    <strong>Lookup Examples:</strong>
-                    Brown, [1.5, 2.3, 1.0]<br>
+                    <strong>Examples:</strong>
+                    Purple + 3 Blue, [1,0,1] + [0,0,1], 2*Brown + Lemon, Brown - 0.5 Green, [2,1,1] - [1,0,0]<br>
                     <strong>Valid Operations:</strong>
-                    <code>+</code> (add), <code>-</code> (subtract), <code>*</code> (multiply), <code>/</code> (divide), fractions like <code>1/3</code>
+                    "+" and "-" for mixing/unmixing colors; "*" and "/" for coefficients for relative proportions of colors
                 </div>
                 <div class="input-group">
                     <label for="mixInput">Enter color operation or lookup:</label>
@@ -333,16 +338,21 @@
                     <p><strong>Note:</strong> Colors are defined by their relative proportions, so [1,0,1] appears the same color (purple) as [2,0,2], with the difference being how much "paint" there is on the palette.</p>
 
                     <h3>Mixing Colors</h3>
-                    <p>Every A + B mixture assumes equal "mass" of A and B; an A + 2 B mixture means that there is twice as much mass in B being mixed with A (2 "portions" of B and 1 "portion" of A). For a whole portion, all of the components add up to 1; e.g., 1 portion of Violet can be normalized to be [1/8,0,7/8].</p>
-                    <p><strong>Example 1:</strong> Green + Chartreuse = [0,1,1] + [0,3,1] = [0,1/2,1/2] + [0,3/4,1/4] = [0,5/4,3/4] = [0,5,3] = Lime</p>
+                    <p>Every A + B mixture assumes equal "mass" or "portions" of A and B; an A + 2 B mixture means that there is twice as much mass of B than A in the mixture (2 "portions" of B and 1 "portion" of A). For a single portion, all of the components add up to 1; e.g., 1 portion of Violet can be normalized to be [1/8,0,7/8].</p>
+                    <p><strong>Example 1:</strong> Green + Chartreuse = "[0,1,1]" + "[0,3,1]" = [0,1/2,1/2] + [0,3/4,1/4] = [0,5/4,3/4] = [0,5,3] = Lime</p>
                     <p><strong>Example 2:</strong> 3 Blue + Red = Violet = Blue + Blue + Blue + Red</p>
-                    <p><strong>Example 3:</strong> 2 Orange + Blue = 2 [1/2,1/2,0] + [0,0,1] = [2,2,0] + [0,0,2] = [2,2,2] = [1,1,1] = Brown</p>
+                    <p><strong>Example 3:</strong> 2 Orange + Blue = 2 "[1/2,1/2,0]" + "[0,0,1]" = [2,2,0] + [0,0,2] = "[2,2,2]" = "[1,1,1]" = Brown</p>
 
                     <h3>Un-Mixing Colors</h3>
-                    <p>This tool also allows for "un-mixing"—this is the OPPOSITE of mixing. Note that for A + B = C, 1 portion of A plus 1 portion of B leads to 2 portions of C, and A + 2 B = C means that C has 3 "portions" of mass. So, C - B = A implies that C has 2 portions, and C - 2B = A implies that C has 3 units of mass.</p>
+                    <p>This tool also allows for "un-mixing"—this is the OPPOSITE of mixing. Note that for A + B = C, 1 portion of A plus 1 portion of B leads to 2 portions of C, and A + 2 B = C means that C has 3 portions (units of mass). So, C - B = A implies that C has 2 portions, and C - 2B = A implies that C has 3 units of mass.</p>
                     <p><strong>Example 1:</strong> Blue + Red = Purple, so… Purple - Blue = Red</p>
-                    <p><strong>Example 2:</strong> Violet - Blue = [1/2,0,3/2] - [0,0,1] = [1/2,0,1/2] = [1,0,1] = Purple</p>
-                    <p><strong>Example 3:</strong> Violet - Red = IMPOSSIBLE (since 1 portion of what + 1 portion of red = Violet? There is no such color!)</p>
+                    <p><strong>Example 2:</strong> Violet - Blue = [1/2,0,3/2] - [0,0,1] = "[1/2,0,1/2]" = "[1,0,1]" = Purple</p>
+
+                    <h3>Impossible Colors</h3>
+                    <p>Sometimes subtracting colors leads to physically impossible results—colors with negative components that don't really exist. While these operations are technically impossible in the real world, the calculator will still provide the mathematical answer with a notice that it's impossible, as well as accept impossible inputs.</p>
+                    <p><strong>Example 1:</strong> Violet - Red = IMPOSSIBLE (since 1 portion of what + 1 portion of red = Violet? There is no such color!)</p>
+                    <p><strong>Example 2:</strong> Red - orange = IMPOSSIBLE...but [3,-1,0]</p>
+                    <p><strong>Example 3:</strong> [3,-1,0] + orange = IMPOSSIBLE...but [3,-1,0] + [1,1,0] = [2,0,0] = red</p>
 
                     <h3>Other Features</h3>
                     <p>• The calculator supports "names" of colors along with coordinates, so [0,0,1]+[1,0,0] is equivalent to Blue + Red.</p>
@@ -522,13 +532,6 @@
             };
         }
 
-        function rgbToHex(rgb) {
-            return '#' + [rgb.r, rgb.g, rgb.b].map(x => {
-                const hex = x.toString(16);
-                return hex.length === 1 ? '0' + hex : hex;
-            }).join('');
-        }
-
         function simplifyRatio(r, y, b) {
             // Find GCD of all three values
             const findGCD = (a, b) => {
@@ -552,24 +555,141 @@
             };
         }
 
-        function gcd(a, b) {
-            a = Math.abs(a);
-            b = Math.abs(b);
-            while (b !== 0) {
-                const temp = b;
-                b = a % b;
-                a = temp;
-            }
-            return a;
+        function rgbToHex(rgb) {
+            return `#${((1 << 24) + (rgb.r << 16) + (rgb.g << 8) + rgb.b).toString(16).slice(1)}`;
         }
 
-        function simplifyFraction(num, den) {
-            if (den === 0) return { numerator: num, denominator: 1 };
-            const divisor = gcd(num, den);
+        function addColors(c1, c2) {
             return {
-                numerator: num / divisor,
-                denominator: den / divisor
+                r: c1.r + c2.r,
+                y: c1.y + c2.y,
+                b: c1.b + c2.b
             };
+        }
+
+        function subtractColors(c1, c2) {
+            // Calculate the total mass of each color
+            const mass1 = c1.r + c1.y + c1.b;
+            const mass2 = c2.r + c2.y + c2.b;
+            
+            // Calculate the total mass (what c1 should be expanded to)
+            const totalMass = mass1 + mass2;
+            
+            // Expand c1 by the factor totalMass/mass1
+            const expansionFactor = totalMass / mass1;
+            const expandedC1 = {
+                r: c1.r * expansionFactor,
+                y: c1.y * expansionFactor,
+                b: c1.b * expansionFactor
+            };
+            
+            // Now subtract c2 from the expanded c1
+            const result = {
+                r: expandedC1.r - c2.r,
+                y: expandedC1.y - c2.y,
+                b: expandedC1.b - c2.b
+            };
+
+            // Check if any component is negative (impossible color)
+            if (result.r < 0 || result.y < 0 || result.b < 0) {
+                result.isImpossible = true;
+            }
+
+            return result;
+        }
+
+        function identifyColor(color) {
+            const total = color.r + color.y + color.b;
+            if (total === 0) {
+                return { name: 'None', level: 'N/A', r: 0, y: 0, b: 0 };
+            }
+
+            // Check for impossible colors (negative components)
+            if (color.isImpossible || color.r < 0 || color.y < 0 || color.b < 0) {
+                const simplified = simplifyToIntegers(color.r, color.y, color.b);
+                return {
+                    name: 'IMPOSSIBLE Color',
+                    level: 'Impossible',
+                    r: color.r,
+                    y: color.y,
+                    b: color.b,
+                    isImpossible: true,
+                    displayCoords: `[${simplified.r}, ${simplified.y}, ${simplified.b}]`
+                };
+            }
+
+            // Normalize
+            const r_norm = color.r / total;
+            const y_norm = color.y / total;
+            const b_norm = color.b / total;
+
+            // Try to match to named colors
+            let bestMatch = null;
+            let bestDistance = Infinity;
+
+            for (const [name, c] of Object.entries(colors)) {
+                const c_total = c.r + c.y + c.b;
+                const c_r = c.r / c_total;
+                const c_y = c.y / c_total;
+                const c_b = c.b / c_total;
+
+                const distance = Math.sqrt(
+                    Math.pow(r_norm - c_r, 2) +
+                    Math.pow(y_norm - c_y, 2) +
+                    Math.pow(b_norm - c_b, 2)
+                );
+
+                if (distance < bestDistance) {
+                    bestDistance = distance;
+                    bestMatch = { name, ...c };
+                }
+            }
+
+            // If close enough to a named color, return it
+            if (bestDistance < 0.05) {
+                return {
+                    name: bestMatch.name,
+                    level: bestMatch.level,
+                    r: color.r,
+                    y: color.y,
+                    b: color.b
+                };
+            }
+
+            // Otherwise, return as custom color
+            return {
+                name: 'Custom Color',
+                level: 'Mixed',
+                r: color.r,
+                y: color.y,
+                b: color.b
+            };
+        }
+
+        function gcd(a, b) {
+            a = Math.abs(Math.round(a));
+            b = Math.abs(Math.round(b));
+            while (b !== 0) {
+                let t = b;
+                b = a % b;
+                a = t;
+            }
+            return a === 0 ? 1 : a;
+        }
+
+        function parseFraction(str) {
+            str = str.trim();
+            if (str.includes('/')) {
+                const parts = str.split('/');
+                const num = parseFloat(parts[0]);
+                const den = parseFloat(parts[1]);
+                if (isNaN(num) || isNaN(den) || den === 0) return null;
+                return { num, den };
+            } else {
+                const num = parseFloat(str);
+                if (isNaN(num)) return null;
+                return { num, den: 1 };
+            }
         }
 
         function parseColorName(name) {
@@ -605,7 +725,7 @@
             const y = parseValue(match[2]);
             const b = parseValue(match[3]);
 
-            if (isNaN(r) || isNaN(y) || isNaN(b) || r < 0 || y < 0 || b < 0) {
+            if (isNaN(r) || isNaN(y) || isNaN(b)) {
                 return null;
             }
 
@@ -723,332 +843,29 @@
             return result.length > 0 ? result : null;
         }
 
-        function addColors(c1, c2) {
-            return {
-                r: c1.r + c2.r,
-                y: c1.y + c2.y,
-                b: c1.b + c2.b
-            };
-        }
-
-        function subtractColors(c1, c2) {
-            // Calculate the total mass of each color
-            const mass1 = c1.r + c1.y + c1.b;
-            const mass2 = c2.r + c2.y + c2.b;
-            
-            // Calculate the total mass (what c1 should be expanded to)
-            const totalMass = mass1 + mass2;
-            
-            // Expand c1 by the factor totalMass/mass1
-            const expansionFactor = totalMass / mass1;
-            const expandedC1 = {
-                r: c1.r * expansionFactor,
-                y: c1.y * expansionFactor,
-                b: c1.b * expansionFactor
-            };
-            
-            // Now subtract c2 from the expanded c1
-            const result = {
-                r: expandedC1.r - c2.r,
-                y: expandedC1.y - c2.y,
-                b: expandedC1.b - c2.b
-            };
-
-            if (result.r < -0.0001 || result.y < -0.0001 || result.b < -0.0001) {
-                return {
-                    error: 'NOT POSSIBLE - insufficient color to subtract',
-                    r: 0, y: 0, b: 0
-                };
-            }
-            
-            // Handle tiny negative values due to floating point errors
-            result.r = Math.max(0, result.r);
-            result.y = Math.max(0, result.y);
-            result.b = Math.max(0, result.b);
-
-            return result;
-        }
-
-        function normalizeToMassOne(color) {
-            const mass = color.r + color.y + color.b;
-            if (mass === 0 || !isFinite(mass)) {
-                return null;
-            }
-            return {
-                r: color.r / mass,
-                y: color.y / mass,
-                b: color.b / mass
-            };
-        }
-
-        // Calculate Euclidean distance between two colors
-        function euclideanDistance(c1, c2) {
-            return Math.sqrt(
-                Math.pow(c1.r - c2.r, 2) +
-                Math.pow(c1.y - c2.y, 2) +
-                Math.pow(c1.b - c2.b, 2)
-            );
-        }
-
-        // Get all known colors (excluding Quinary for decomposition)
-        function getKnownColors() {
-            return Object.entries(colors)
-                .filter(([_, c]) => c.level !== 'Quinary')
-                .map(([name, coords]) => ({ name, ...coords }));
-        }
-
-        // Find the two closest known colors that can decompose the input color
-        // Returns { colorA, colorB, massA, massB } where the input = massA*A + massB*B
-        // where A and B are normalized to mass=1
-        function findTwoClosestColors(r, y, b) {
-            const knownColors = getKnownColors();
-            let bestDecomposition = null;
-            let bestError = Infinity;
-            
-            // Special case: if all three coordinates are non-zero, prioritize Brown
-            // since Brown is the only known color with all three components
-            const allNonZero = r > 0.0001 && y > 0.0001 && b > 0.0001;
-
-            // Try all pairs of known colors
-            for (let i = 0; i < knownColors.length; i++) {
-                for (let j = i; j < knownColors.length; j++) {
-                    const A_orig = knownColors[i];
-                    const B_orig = knownColors[j];
-                    
-                    // If all coords are non-zero, only consider pairs that include Brown
-                    if (allNonZero && A_orig.name !== 'Brown' && B_orig.name !== 'Brown') {
-                        continue;
-                    }
-                    
-                    // Normalize A and B to mass=1
-                    const A_mass = A_orig.r + A_orig.y + A_orig.b;
-                    const B_mass = B_orig.r + B_orig.y + B_orig.b;
-                    
-                    const A = {
-                        name: A_orig.name,
-                        r: A_orig.r / A_mass,
-                        y: A_orig.y / A_mass,
-                        b: A_orig.b / A_mass
-                    };
-                    
-                    const B = {
-                        name: B_orig.name,
-                        r: B_orig.r / B_mass,
-                        y: B_orig.y / B_mass,
-                        b: B_orig.b / B_mass
-                    };
-
-                    // Solve: r = n*A.r + m*B.r, y = n*A.y + m*B.y, b = n*A.b + m*B.b
-                    // This is an overdetermined system, so we'll use least squares approach
-                    // For simplicity, we'll try to solve using two of the three equations
-                    
-                    // Try different pairs of equations to find n and m
-                    const solutions = [];
-                    
-                    // Use R and Y equations
-                    const det1 = A.r * B.y - A.y * B.r;
-                    if (Math.abs(det1) > 0.001) {
-                        const n1 = (r * B.y - y * B.r) / det1;
-                        const m1 = (A.r * y - A.y * r) / det1;
-                        if (n1 >= -0.001 && m1 >= -0.001) {
-                            solutions.push({ n: Math.max(0, n1), m: Math.max(0, m1) });
-                        }
-                    }
-
-                    // Use R and B equations
-                    const det2 = A.r * B.b - A.b * B.r;
-                    if (Math.abs(det2) > 0.001) {
-                        const n2 = (r * B.b - b * B.r) / det2;
-                        const m2 = (A.r * b - A.b * r) / det2;
-                        if (n2 >= -0.001 && m2 >= -0.001) {
-                            solutions.push({ n: Math.max(0, n2), m: Math.max(0, m2) });
-                        }
-                    }
-
-                    // Use Y and B equations
-                    const det3 = A.y * B.b - A.b * B.y;
-                    if (Math.abs(det3) > 0.001) {
-                        const n3 = (y * B.b - b * B.y) / det3;
-                        const m3 = (A.y * b - A.b * y) / det3;
-                        if (n3 >= -0.001 && m3 >= -0.001) {
-                            solutions.push({ n: Math.max(0, n3), m: Math.max(0, m3) });
-                        }
-                    }
-
-                    // Evaluate each solution
-                    for (const sol of solutions) {
-                        const reconstructed = {
-                            r: sol.n * A.r + sol.m * B.r,
-                            y: sol.n * A.y + sol.m * B.y,
-                            b: sol.n * A.b + sol.m * B.b
-                        };
-
-                        const error = euclideanDistance({ r, y, b }, reconstructed);
-                        
-                        if (error < bestError) {
-                            bestError = error;
-                            // massA and massB are simply n and m since A and B are normalized
-                            bestDecomposition = {
-                                colorA: A.name,
-                                colorB: B.name,
-                                massA: sol.n,
-                                massB: sol.m,
-                                error: error
-                            };
-                        }
-                    }
-                }
-            }
-
-            return bestDecomposition;
-        }
-
-        function identifyColor(color) {
-            const { r, y, b } = color;
-            const totalMass = r + y + b;
-
-            if (totalMass < 0.0001) {
-                return { name: 'No Color (Black)', level: 'Special', r: 0, y: 0, b: 0 };
-            }
-
-            // CASE 1: Exact match to a known color
-            for (const [name, c] of Object.entries(colors)) {
-                // Skip Quinary colors for now (we'll check them in Case 3)
-                if (c.level === 'Quinary') continue;
-                
-                const knownMass = c.r + c.y + c.b;
-                const scale = totalMass / knownMass;
-                
-                if (Math.abs(c.r * scale - r) < 0.0001 &&
-                    Math.abs(c.y * scale - y) < 0.0001 &&
-                    Math.abs(c.b * scale - b) < 0.0001) {
-                    return { name, level: c.level, r, y, b };
-                }
-            }
-
-            // CASE 2: Extremely close to a known color (Euclidean distance ≤ 1/100 of total mass)
-            const threshold = totalMass / 100;
-            for (const [name, c] of Object.entries(colors)) {
-                if (c.level === 'Quinary') continue;
-                
-                const knownMass = c.r + c.y + c.b;
-                const scale = totalMass / knownMass;
-                const scaledColor = { r: c.r * scale, y: c.y * scale, b: c.b * scale };
-                
-                const distance = euclideanDistance({ r, y, b }, scaledColor);
-                
-                if (distance <= threshold) {
-                    return { name, level: c.level, r, y, b };
-                }
-            }
-
-            // CASE 3: Exact match to a quinary color
-            for (const [name, c] of Object.entries(colors)) {
-                if (c.level !== 'Quinary') continue;
-                
-                const knownMass = c.r + c.y + c.b;
-                const scale = totalMass / knownMass;
-                
-                if (Math.abs(c.r * scale - r) < 0.0001 &&
-                    Math.abs(c.y * scale - y) < 0.0001 &&
-                    Math.abs(c.b * scale - b) < 0.0001) {
-                    return { name, level: 'Custom', r, y, b };
-                }
-            }
-
-            // CASES 4 & 5: Find two closest known colors and compare masses
-            const decomposition = findTwoClosestColors(r, y, b);
-            
-            if (decomposition && decomposition.error < totalMass * 0.01) {
-                const { colorA, colorB, massA, massB } = decomposition;
-                
-                // Determine which has more mass
-                let largerColor, smallerColor, largerMass, smallerMass;
-                if (massA >= massB) {
-                    largerColor = colorA;
-                    smallerColor = colorB;
-                    largerMass = massA;
-                    smallerMass = massB;
-                } else {
-                    largerColor = colorB;
-                    smallerColor = colorA;
-                    largerMass = massB;
-                    smallerMass = massA;
-                }
-
-                // Check for equal masses (within tolerance)
-                if (Math.abs(massA - massB) < 0.0001) {
-                    // Equal masses: "A-B"
-                    return { 
-                        name: `${colorA}-${colorB}`, 
-                        level: 'Custom', 
-                        r, y, b 
-                    };
-                }
-
-                // CASE 4: mass(A) <= 2*mass(B) → "Bish-A"
-                if (largerMass <= 2 * smallerMass) {
-                    return { 
-                        name: `${smallerColor}ish-${largerColor}`, 
-                        level: 'Custom', 
-                        r, y, b 
-                    };
-                }
-
-                // CASE 5: mass(A) > 2*mass(B) → "shade of A"
-                return { 
-                    name: `Shade of ${largerColor}`, 
-                    level: 'Custom', 
-                    r, y, b 
-                };
-            }
-
-            // Fallback: find the single closest color
-            let closestName = 'Unknown';
-            let closestDistance = Infinity;
-            
-            for (const [name, c] of Object.entries(colors)) {
-                if (c.level === 'Quinary') continue;
-                
-                const knownMass = c.r + c.y + c.b;
-                const scale = totalMass / knownMass;
-                const scaledColor = { r: c.r * scale, y: c.y * scale, b: c.b * scale };
-                
-                const distance = euclideanDistance({ r, y, b }, scaledColor);
-                
-                if (distance < closestDistance) {
-                    closestDistance = distance;
-                    closestName = name;
-                }
-            }
-
-            return {
-                name: `Shade of ${closestName}`,
-                level: 'Custom',
-                r, y, b
-            };
-        }
-
         function simplifyToIntegers(r, y, b) {
-            // First, try to detect common fractions (1/2, 1/3, 1/4, etc.) with reasonable precision
-            const findFraction = (val) => {
-                // Try denominators up to 24 (covers most common fractions)
-                for (let den = 1; den <= 24; den++) {
-                    const num = Math.round(val * den);
-                    if (Math.abs(val - num / den) < 0.0001) {
-                        return { num, den };
-                    }
-                }
-                // Fall back to high precision
-                return { num: Math.round(val * 1000000), den: 1000000 };
+            // Convert to fractions
+            const toFraction = (num) => {
+                if (Number.isInteger(num)) return { num, den: 1 };
+                
+                const precision = 1000000;
+                const gcdCalc = (a, b) => b ? gcdCalc(b, a % b) : a;
+                const numerator = Math.round(num * precision);
+                const denominator = precision;
+                const divisor = gcdCalc(numerator, denominator);
+                
+                return { 
+                    num: numerator / divisor, 
+                    den: denominator / divisor 
+                };
             };
             
-            const r_frac = findFraction(r);
-            const y_frac = findFraction(y);
-            const b_frac = findFraction(b);
+            const r_frac = toFraction(r);
+            const y_frac = toFraction(y);
+            const b_frac = toFraction(b);
             
-            // Find LCM of denominators
-            const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+            // Find common denominator
+            const lcm = (a, b) => (a * b) / gcd(a, b);
             const commonDen = lcm(lcm(r_frac.den, y_frac.den), b_frac.den);
             
             // Convert to common denominator
@@ -1095,6 +912,22 @@
                     <div class="result error">
                         <h3>Error</h3>
                         <p>${result.error}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Handle impossible colors
+            if (result.isImpossible) {
+                const simplified = simplifyToIntegers(result.r, result.y, result.b);
+                container.innerHTML = `
+                    <div class="result" style="border-color: #ffc107; background: #fff3cd;">
+                        <h3 style="color: #856404;">IMPOSSIBLE Color</h3>
+                        <p style="color: #856404;"><strong>Notice:</strong> This color contains negative components and cannot physically exist in the real world.</p>
+                        <div class="color-info">
+                            <p><strong>Mathematical Coordinates:</strong> [${simplified.r}, ${simplified.y}, ${simplified.b}]</p>
+                            <p style="font-style: italic; margin-top: 10px;">These "impossible" colors can still be useful in calculations. When mixed with other colors, they can produce real, valid colors!</p>
+                        </div>
                     </div>
                 `;
                 return;
@@ -1149,17 +982,6 @@
                     return;
                 }
 
-                // Check if first color has an error
-                if (operations[0].color.error) {
-                    result.innerHTML = `
-                        <div class="result error">
-                            <h3>Error</h3>
-                            <p>${operations[0].color.error}</p>
-                        </div>
-                    `;
-                    return;
-                }
-
                 // If only one term, it's a lookup
                 if (operations.length === 1) {
                     const color = operations[0].color;
@@ -1175,25 +997,10 @@
                     const operator = operations[i];
                     const nextColor = operations[i + 1].color;
 
-                    // Check for errors in the next color
-                    if (nextColor.error) {
-                        result.innerHTML = `
-                            <div class="result error">
-                                <h3>Error</h3>
-                                <p>${nextColor.error}</p>
-                            </div>
-                        `;
-                        return;
-                    }
-
                     if (operator.operator === 'add') {
                         currentColor = addColors(currentColor, nextColor);
                     } else {
                         currentColor = subtractColors(currentColor, nextColor);
-                        if (currentColor.error) {
-                            displayResult(result, currentColor);
-                            return;
-                        }
                     }
                 }
 
