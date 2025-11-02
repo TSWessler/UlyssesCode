@@ -341,9 +341,8 @@
 
                     <h3>Impossible Colors</h3>
                     <p>Sometimes subtracting colors leads to physically impossible results—colors with negative components that don't really exist. While these operations are technically impossible in the real world, the calculator will still provide the mathematical answer with a notice that it's impossible, as well as accept impossible inputs.</p>
-                    <p><strong>Example 1:</strong> Violet - Red = IMPOSSIBLE (since 1 portion of what + 1 portion of red = Violet? There is no such color!)</p>
-                    <p><strong>Example 2:</strong> Red - orange = IMPOSSIBLE...but [3,-1,0]</p>
-                    <p><strong>Example 3:</strong> [3,-1,0] + orange = IMPOSSIBLE...but [3,-1,0] + [1,1,0] = [2,0,0] = red</p>
+                    <p><strong>Example 1:</strong> Violet - Red = IMPOSSIBLE (since 1 portion of what + 1 portion of red = Violet? There is no such color!)...but [-1, 0, 3]</p>
+                    <p><strong>Example 2:</strong> [3,-1,0] + orange = IMPOSSIBLE...but [3,-1,0] + [1,1,0] = [2,0,0] = red</p>
 
                     <h3>Other Features</h3>
                     <p>• The calculator supports "names" of colors along with coordinates, so [0,0,1]+[1,0,0] is equivalent to Blue + Red.</p>
@@ -755,17 +754,10 @@
                 b: expandedC1.b - c2.b
             };
 
-            if (result.r < -0.0001 || result.y < -0.0001 || result.b < -0.0001) {
-                return {
-                    error: 'NOT POSSIBLE - insufficient color to subtract',
-                    r: 0, y: 0, b: 0
-                };
+            // Check if any component is negative (impossible color)
+            if (result.r < 0 || result.y < 0 || result.b < 0) {
+                result.isImpossible = true;
             }
-            
-            // Handle tiny negative values due to floating point errors
-            result.r = Math.max(0, result.r);
-            result.y = Math.max(0, result.y);
-            result.b = Math.max(0, result.b);
 
             return result;
         }
@@ -910,6 +902,18 @@
 
             if (totalMass < 0.0001) {
                 return { name: 'No Color (Black)', level: 'Special', r: 0, y: 0, b: 0 };
+            }
+
+            // Check for impossible colors (negative components)
+            if (color.isImpossible || r < 0 || y < 0 || b < 0) {
+                return {
+                    name: 'IMPOSSIBLE Color',
+                    level: 'Impossible',
+                    r: r,
+                    y: y,
+                    b: b,
+                    isImpossible: true
+                };
             }
 
             // Normalize the color
@@ -1200,6 +1204,21 @@
                     <div class="result error">
                         <h3>Error</h3>
                         <p>${result.error}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Handle impossible colors
+            if (result.isImpossible) {
+                const simplified = simplifyToIntegers(result.r, result.y, result.b);
+                container.innerHTML = `
+                    <div class="result" style="border-color: #ffc107; background: #fff3cd;">
+                        <h3 style="color: #856404;">IMPOSSIBLE Color</h3>
+                        <p style="color: #856404;"><strong>Notice:</strong> This color contains negative components and cannot physically exist in the real world.</p>
+                        <div class="color-info">
+                            <p><strong>Mathematical Coordinates:</strong> [${simplified.r}, ${simplified.y}, ${simplified.b}]</p>
+                        </div>
                     </div>
                 `;
                 return;
