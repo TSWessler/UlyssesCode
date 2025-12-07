@@ -1,0 +1,136 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+This is one of the main programs for Ulysses and his therapists/teachers. Ulysses likes to count by intervals beginning at various starting values. Ex. "Count by 1.9's starting at 0.9--0.9, 2.8, 4.7, ..."
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
+Ex:
+1: val_{1}
+2: val_{2}
+3: val_{3}
+.
+.
+.
+n: val_{n}
+
+And terminates when n exceeds some hard-coded value or val_{n} exceeds an input value.
+
+
+To run:
+1. At prompt "Enter number counting by:" enter the number counting by then press Enter.
+2. At prompt "Enter starting number:" enter the number starting at then press Enter.
+3. At prompt "Enter max value to count to:" enter the max number to count to then press Enter.
+4. Press Enter when prompted.
+
+
+Example 1:
+
+Enter number counting by:
+1.9
+Enter starting number:
+.9
+Enter max value to count to:
+19.9
+
+0: 0.9
+1: 2.8
+2: 4.7
+3: 6.6
+4: 8.5
+5: 10.4
+6: 12.3
+7: 14.2
+8: 16.1
+9: 18.0
+10: 19.9
+Done!
+Try again sometime!
+
+
+Example 2:
+
+Enter number counting by:
+.155555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
+Enter starting number:
+0
+Enter max value to count to:
+1.55555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
+
+0: 0.0
+1: .15555555555555556
+2: .31111111111111112
+3: .46666666666666664
+4: .62222222222222224
+5: .77777777777777776
+6: .93333333333333328
+7: 1.08888888888888896
+8: 1.24444444444444448
+9: 1.39999999999999984
+10: 1.55555555555555520
+11: 1.71111111111111072
+Done!
+Try again sometime!
+
+
+
+NOTES:
+
+Can only input decimal values, not fractions or other functions. So, if you want to count by something like 1/7, must enter decimal approximation.
+
+If you try Ulee's current favorite number to count by, 14/90 (0.155555555555555555...), you can see that there are errors after several 15 or so decimal places due to floating point arithmetic.
+
+
+
+
+
+
+
+Summary:
+
+
+Name:
+    CNT_SKIP.py
+
+Version:
+    wessler
+    2025 December 7
+    update to: 2024 November 10
+    changes:
+        *consolidation edits
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *counts from "start_value" until reaching (at least) "max_value" by repeatedly increasing by a value of "skip_value"
+    *e.g.: start_value = 0; max_value = 15; skip_value = 2;
+        goes: 0, 2, 4, 6, 8, 10, 12, 14, 16
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *skip_value
+            *start_value
+            *max_value (value that counts to with skipping)
+        Output:
+            0: start_value
+            1: 1*skip_value+start_value
+            .
+            .
+            .
+            i: i*skip_value+start_value
+
+            it ends when either i==max_number_of_numbers (hard-coded) or i*skip_value+start_value>=max_value
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+
+* Floating-point arithmetic causes approximation errors
+* Might want to add int check for the start number display...

@@ -1,0 +1,120 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+Ulysses kept asking me how to count by base-1, and I told him that we couldn't, and he kept asking why. I came up with a way to do it.
+
+Counting by base-1 is basically making tally marks. But, I told Ulysses the rule that for base-n we don't say the number n, so in base-1 we don't say the number 1. So, all we have are 0's.
+
+If we are using only 0's, and in a tally mark kind of way, then "0" means 1, "00" means 2, "000" means 3, and so on.
+
+That means that "0" can't represent 0, and instead a blank space means 0 (similar to no tally marks). But, we can instead use "+0" to make +1 and "-0" to make -1, so "+" or "-" can be used to make 0.
+
+This is how we count in base-1.
+
+
+However, Ulysses also likes counting aloud, so rather than saying "zero, zero zero, zero zero zero, ...," we can find similar patterns of "four, forty-four, four hundred and forty four, ...," which led me to say "zero, zeroty-zero, zero hundred and zeroty-zero, ..."
+
+Ulysses is obsessed with prefixes (nano, micro, milli, deca, kilo, mega, etc.) as well as names of large numbers (thousand, million, billion, trillion, etc.), so I saw this as an opportunity to put a bunch of large numbers, so he can currently go as high as 000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000 (so the unquadragintillions).
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right), followed by how to say the last number out loud.
+Ex:
+0: +
+1: +0
+2: +00
+.
+.
+.
+n: val_{n}
+
+And terminates when the input value is reached, then says the name of the nth number.
+
+
+
+To run:
+1. At prompt "Enter how many numbers to count:" enter the number of numbers to count then press Enter.
+2. Press Enter when prompted.
+
+
+Example 1:
+
+Enter how many numbers to count:
+9
+0: +
+1: +0
+2: +00
+3: +000
+4: +0000
+5: +00000
+6: +000000
+7: +0000000
+8: +00000000
+9: +000000000
+zero hundred and zeroty zero million
+zero hundred and zeroty zero thousand
+zero hundred and zeroty zero
+Try again sometime!
+
+
+
+
+
+
+
+NOTES:
+
+
+
+
+
+
+
+
+
+Summary:
+
+
+Name:
+    CNT_BAS1.py
+
+Version:
+    wessler
+    2025 December 7
+    update to: 2024 November 8
+    changes:
+        *consolidation edits
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *counts in "base 1" up to a max number of numbers
+    *gives the number and then text for saying the number aloud
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *max_number_of_numbers
+        Output:
+            0: +
+            1: +0
+            2: +00
+            .
+            .
+            .
+            i: j
+
+            output_string
+
+            it ends when i==max_number_of_numbers, then outputs how the last number is said aloud
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+
+I kind of want to add commas to "display_string" in "count_numbers" but haven't yet

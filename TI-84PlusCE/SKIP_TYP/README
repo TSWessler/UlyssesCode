@@ -1,0 +1,91 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+All it does is sees if one number (number to count to) divides another number (number counting by). Ulee wanted a program of this name to fit with the other program names (***_TYP and SKIP_***), and he also wanted a program with frowning faces, so he made up this program for me to put on his calculator.
+
+
+To run:
+1. At prompt "Enter number counting by:" enter number to count by then press Enter.
+2. At prompt "Enter number to count to:" enter number to count to then press Enter.
+
+
+Example 1:
+Enter number counting by:
+0.15
+Enter number to count to:
+1
+:(
+Sorry! Cannot type a number to count to that is not divisible by the number counting by!
+:(
+Try again sometime!
+
+
+Example 2:
+Enter number counting by:
+0.15
+Enter number to count to:
+1.5
+:)
+Good job typing numbers divisible by each other!
+:)
+Try again sometime!
+
+
+
+
+
+
+NOTES:
+
+
+
+
+
+
+
+
+
+Summary:
+
+
+Name:
+    SKIP_TYP.py
+
+Version:
+    wessler
+    2025 December 7
+    update to: 2024 November 10
+    changes:
+        *consolidation edits
+	*fixed up a couple of edge cases
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *just sees if you typed numbers that are divisible by each other
+    *Ulee wanted a program of this name to fit with the other program names, and he also wanted a program with frowning faces, so he made up this program.
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *skip_value
+            *target_value
+        Output:
+            :)
+	    Good job typing numbers divisible by each other!
+	    :)
+            --or--
+	    :(
+	    Sorry! Cannot type a number to count to that is not divisible by the number counting by!
+	    :(
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+

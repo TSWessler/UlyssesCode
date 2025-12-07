@@ -1,0 +1,109 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+Ulysses likes to count by 0^2, 1^2, 2^2, 3^2, ... and 0^3, 1^3, 2^3, 3^3, ... etc.
+
+This code does just that: the user puts in the power and it counts n^power where n=0,1,2,...
+
+Ex. 0,1,4,9,16,...
+
+
+The output displays the number of numbers that have been counted/displayed (on the left) and the value of the nth number counted (on the right)
+Ex:
+0: val_{0}
+1: val_{1}
+2: val_{2}
+3: val_{3}
+.
+.
+.
+n: val_{n}
+
+And terminates when n exceeds some hard-coded value or val_{n} exceeds an input value.
+
+
+To run:
+1. At prompt "Enter power value:" enter the value of the power then press Enter.
+2. At prompt "Enter max value:" enter the max value then press Enter.
+3. Press Enter when prompted.
+
+
+Example 1:
+
+Enter power value:
+3
+Enter max value:
+1000
+
+0: 0.0
+1: 1.0
+2: 8.0
+3: 27.0
+4: 64.0
+5: 125.0
+6: 216.0
+7: 343.0
+8: 512.0
+9: 729.0
+10: 1000.0
+Done!
+Try again sometime!
+
+
+
+
+NOTES:
+
+It does do fractional and negative powers with 0^power (power<=0 undefined), but, in this version it doesn't have a minimum value so will run until the max number of numbers is reached.
+
+
+
+
+
+
+
+
+Header from the file copied/pasted below:
+
+
+Name:
+    CNT_POWR.py
+
+Version:
+    wessler
+    2024 November 8
+    update to: 2024 November 7
+    changes:
+        *cosmetic changes to be more consistent with other scripts
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *counts 0^power, 1^power, 2^power, 3^power, ...
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            *power
+            *max_value
+        Output:
+            0: 0^power
+            1: 1^power
+            2: 2^power
+            .
+            .
+            .
+            i: i^power
+
+            it ends when either i==max_number_of_numbers (hard-coded) or i^power>=max_value
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+

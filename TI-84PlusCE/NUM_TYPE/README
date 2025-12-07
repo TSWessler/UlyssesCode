@@ -1,0 +1,114 @@
+This code is was designed for Ulysses to run on his TI-84 Plus CE calculator.
+
+Ulysses likes to classify things. Numbers are no different. This program has the following sets:
+Natural
+Whole
+Integer
+Rational/Irrational
+Real/Imaginary
+Complex
+
+
+To run:
+1. At prompt:
+	Enter "number" to classify:
+	Note: "j" is for imaginary part
+   Enter a number (where Python treats "j" as the imaginary unit)
+2. Press "Enter" after each question to see whether or not the number is a member of that set
+
+
+Example 1:
+Enter "number" to classify:
+Note: "j" is for imaginary part
+0 [ENTER]
+Is 0 a Complex Number?
+[ENTER]
+It is a complex number!
+Is 0 Real or Imaginary?
+[ENTER]
+Real!
+Is 0 Rational or Irrational?
+[ENTER]
+Rational!
+...at least according to computers
+Is 0 an Integer?
+[ENTER]
+YES!
+Is 0 a Whole Number?
+[ENTER]
+YES!
+Is 0 a Natural Number?
+[ENTER]
+NO :(
+Try again sometime!
+
+
+
+
+
+
+
+
+NOTES:
+
+* This actually can't find any complex numbers, because any irrational number becomes the computer representation, which is rational.
+* Another addition could be adding a list of acceptable (non-comprehensive) irrational numbers.
+* If it DID have irrational numbers, Ulee would definitely appreciate categorizing as algebraic or transcendental.
+* A good future improvement Ulee would like: Categorize complex numbers as rational/integer etc. complex numbers, not just subset of reals.
+
+
+
+
+
+Summary:
+
+
+Name:
+    NUM_TYPE.py
+
+Version:
+    wessler
+    2025 December 7
+    update to: 2024 November 8
+    changes:
+        *consolidation edits
+	*did README
+
+Description:
+    *designed to run on Ulee's TI-84 Plus CE
+    *classifies a number as Complex, Imaginary/Real, Rational/Irrational, Integer, Whole, Natural
+
+Inputs:
+    *NOTHING
+    *(does have user input values when prompted)
+
+Outputs/does:
+
+        Enter:
+            [input]
+        Output:
+	    Is [input] a Complex Number?
+	    [yes or no statement]
+	    Is [input] Real or Imaginary?
+	    [real or imaginary statement]
+	    Is [input] Rational or Irrational?
+	    [rational or irrational statement]
+	    Is [input] an Integer?
+	    [yes or no statement]
+	    Is [input] a Whole Number?
+	    [yes or no statement]
+	    Is [input] a Natural Number?
+	    [yes or no statement]
+	    Try again sometime!
+
+Used by:
+    *NOTHING--this is standalone code
+
+Uses:
+    *NOTHING--this is standalone code
+
+NOTES:
+* This actually can't find any complex numbers, because any irrational number becomes the computer representation, which is rational.
+* Another addition could be adding a list of acceptable (non-comprehensive) irrational numbers.
+* If it DID have irrational numbers, Ulee would definitely appreciate categorizing as algebraic or transcendental.
+* A good future improvement Ulee would like: Categorize complex numbers as rational/integer etc. complex numbers, not just subset of reals.
