@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Color Mixer - RYB Color Theory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        header h2 {
+            font-size: 1.1em;
+            margin-bottom: 0;
+            font-weight: normal;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .section h3 {
+            color: #667eea;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .section p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+        }
+
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .color-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .color-swatch {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            border: 3px solid #333;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .color-info p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .reference {
+            grid-column: 1 / -1;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .color-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .color-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.2s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: scaleIn 0.3s;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .color-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .color-card-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 2px solid #333;
+        }
+
+        .color-card-name {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .color-card-coord {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .help-text {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            color: #004085;
+        }
+
+        .help-text strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .color-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Paint Color Mixer (and Un-Mixer)</h1>
+            <h2>RYB Color Theory Calculator</h2>
+        </header>
+
+        <div class="main-content">
+            <div class="section" style="grid-column: 1 / -1;">
+                <h2>Mix and "Un-Mix" Colors</h2>
+                <p style="margin-bottom: 15px;">Think of this webpage as the palette you mix paint on and the calculator tells you what colors you get out afterward. See bottom for more information and full examples.</p>
+                <div class="help-text">
+                    <strong>Examples:</strong>
+                    Purple + 3 Blue, [1,0,1] + [0,0,1], 2*Brown + Lemon, Brown - 0.5 Green, [2,1,1] - [1,0,0]<br>
+                    <strong>Valid Operations:</strong>
+                    "+" and "-" for mixing/unmixing colors; "*" and "/" for coefficients for relative proportions of colors
+                </div>
+                <div class="input-group">
+                    <label for="mixInput">Enter color operation or lookup:</label>
+                    <input type="text" id="mixInput" placeholder="e.g., Purple + 3 Blue, Brown - 1/3 Green, or Brown">
+                </div>
+                <div class="button-group">
+                    <button onclick="processOperation()">Calculate</button>
+                    <button onclick="clearMix()">Clear</button>
+                </div>
+                <div id="mixResult"></div>
+            </div>
+
+            <div class="section reference">
+                <h2>Color Reference Guide</h2>
+                <div id="colorReference"></div>
+            </div>
+
+            <div class="section reference">
+                <h2>How to Use This Tool</h2>
+                <div>
+                    <p><strong>Note:</strong> Colors are defined by their relative proportions, so [1,0,1] appears the same color (purple) as [2,0,2], with the difference being how much "paint" there is on the palette.</p>
+
+                    <h3>Mixing Colors</h3>
+                    <p>Every A + B mixture assumes equal "mass" or "portions" of A and B; an A + 2 B mixture means that there is twice as much mass of B than A in the mixture (2 "portions" of B and 1 "portion" of A). For a single portion, all of the components add up to 1; e.g., 1 portion of Violet can be normalized to be [1/8,0,7/8].</p>
+                    <p><strong>Example 1:</strong> Green + Chartreuse = "[0,1,1]" + "[0,3,1]" = [0,1/2,1/2] + [0,3/4,1/4] = [0,5/4,3/4] = [0,5,3] = Lime</p>
+                    <p><strong>Example 2:</strong> 3 Blue + Red = Violet = Blue + Blue + Blue + Red</p>
+                    <p><strong>Example 3:</strong> 2 Orange + Blue = 2 [1/2,1/2,0] + [0,0,1] = [2,2,0] + [0,0,2] = "[2,2,2]" = "[1,1,1]" = Brown</p>
+
+                    <h3>Un-Mixing Colors</h3>
+                    <p>This tool also allows for "un-mixing"—this is the OPPOSITE of mixing. Note that for A + B = C, 1 portion of A plus 1 portion of B leads to 2 portions of C, and A + 2 B = C means that C has 3 portions (units of mass). So, C - B = A implies that C has 2 portions, and C - 2B = A implies that C has 3 units of mass.</p>
+                    <p><strong>Example 1:</strong> Blue + Red = Purple, so… Purple - Blue = Red</p>
+                    <p><strong>Example 2:</strong> Violet - Blue = [1/2,0,3/2] - [0,0,1] = [1/2,0,1/2] = "[1,0,1]" = Purple</p>
+
+                    <h3>Impossible Colors</h3>
+                    <p>Sometimes subtracting colors leads to physically impossible results—colors with negative components that don't really exist. While these operations are technically impossible in the real world, the calculator will still provide the mathematical answer with a notice that it's impossible, as well as accept impossible inputs.</p>
+                    <p><strong>Example 1:</strong> Violet - Red = IMPOSSIBLE (since 1 portion of what + 1 portion of red = Violet? There is no such color!)...but [-1, 0, 3]</p>
+                    <p><strong>Example 2:</strong> [3,-1,0] + orange = IMPOSSIBLE...but [3,-1,0] + [1,1,0] = [2,0,0] = red</p>
+
+                    <h3>Other Features</h3>
+                    <p>• The calculator supports "names" of colors along with coordinates, so [0,0,1]+[1,0,0] is equivalent to Blue + Red.</p>
+                    <p>• To look up a color, simply type its name or coordinates (e.g., "Brown" or "[1,1,1]").</p>
+                    <p>• Click any color in the reference guide to see its details.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for color details -->
+    <div id="colorModal" class="modal">
+        <div class="modal-content">
+            <h2 style="color: #667eea; margin-bottom: 15px;">Color Details</h2>
+            <div id="modalColorDetails"></div>
+            <button onclick="closeColorModal()" style="margin-top: 15px; width: 100%;">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Define the complete color system (Wikipedia RYB standard)
+        const colors = {
+            // Primary (3)
+            'Red': { r: 1, y: 0, b: 0, level: 'Primary' },
+            'Yellow': { r: 0, y: 1, b: 0, level: 'Primary' },
+            'Blue': { r: 0, y: 0, b: 1, level: 'Primary' },
+
+            // Secondary (3)
+            'Orange': { r: 1, y: 1, b: 0, level: 'Secondary' },
+            'Green': { r: 0, y: 1, b: 1, level: 'Secondary' },
+            'Purple': { r: 1, y: 0, b: 1, level: 'Secondary' },
+
+            // Brown (1) - Special mixed color
+            'Brown': { r: 1, y: 1, b: 1, level: 'Brown' },
+
+            // Tertiary (6) - Wikipedia standard
+            'Vermilion': { r: 3, y: 1, b: 0, level: 'Tertiary' },
+            'Amber': { r: 1, y: 3, b: 0, level: 'Tertiary' },
+            'Chartreuse': { r: 0, y: 3, b: 1, level: 'Tertiary' },
+            'Teal': { r: 0, y: 1, b: 3, level: 'Tertiary' },
+            'Violet': { r: 1, y: 0, b: 3, level: 'Tertiary' },
+            'Magenta': { r: 3, y: 0, b: 1, level: 'Tertiary' },
+
+            // Quaternary (12) - Wikipedia standard
+            'Scarlet': { r: 7, y: 1, b: 0, level: 'Quaternary' },
+            'Persimmon': { r: 5, y: 3, b: 0, level: 'Quaternary' },
+            'Sun': { r: 3, y: 5, b: 0, level: 'Quaternary' },
+            'Golden': { r: 1, y: 7, b: 0, level: 'Quaternary' },
+            'Lemon': { r: 0, y: 7, b: 1, level: 'Quaternary' },
+            'Lime': { r: 0, y: 5, b: 3, level: 'Quaternary' },
+            'Viridian': { r: 0, y: 3, b: 5, level: 'Quaternary' },
+            'Cerulean': { r: 0, y: 1, b: 7, level: 'Quaternary' },
+            'Indigo': { r: 1, y: 0, b: 7, level: 'Quaternary' },
+            'Amethyst': { r: 3, y: 0, b: 5, level: 'Quaternary' },
+            'Aubergine': { r: 5, y: 0, b: 3, level: 'Quaternary' },
+            'Crimson': { r: 7, y: 0, b: 1, level: 'Quaternary' },
+
+            // Quinary (24) - Descriptive hyphenated names
+            'Red-Scarlet': { r: 15, y: 1, b: 0, level: 'Quinary' },
+            'Scarlet-Vermilion': { r: 13, y: 3, b: 0, level: 'Quinary' },
+            'Vermilion-Persimmon': { r: 11, y: 5, b: 0, level: 'Quinary' },
+            'Persimmon-Orange': { r: 9, y: 7, b: 0, level: 'Quinary' },
+            'Orange-Sun': { r: 7, y: 9, b: 0, level: 'Quinary' },
+            'Sun-Amber': { r: 5, y: 11, b: 0, level: 'Quinary' },
+            'Amber-Golden': { r: 3, y: 13, b: 0, level: 'Quinary' },
+            'Golden-Yellow': { r: 1, y: 15, b: 0, level: 'Quinary' },
+            'Yellow-Lemon': { r: 0, y: 15, b: 1, level: 'Quinary' },
+            'Lemon-Chartreuse': { r: 0, y: 13, b: 3, level: 'Quinary' },
+            'Chartreuse-Lime': { r: 0, y: 11, b: 5, level: 'Quinary' },
+            'Lime-Green': { r: 0, y: 9, b: 7, level: 'Quinary' },
+            'Green-Viridian': { r: 0, y: 7, b: 9, level: 'Quinary' },
+            'Viridian-Teal': { r: 0, y: 5, b: 11, level: 'Quinary' },
+            'Teal-Cerulean': { r: 0, y: 3, b: 13, level: 'Quinary' },
+            'Cerulean-Blue': { r: 0, y: 1, b: 15, level: 'Quinary' },
+            'Blue-Indigo': { r: 1, y: 0, b: 15, level: 'Quinary' },
+            'Indigo-Violet': { r: 3, y: 0, b: 13, level: 'Quinary' },
+            'Violet-Amethyst': { r: 5, y: 0, b: 11, level: 'Quinary' },
+            'Amethyst-Purple': { r: 7, y: 0, b: 9, level: 'Quinary' },
+            'Purple-Aubergine': { r: 9, y: 0, b: 7, level: 'Quinary' },
+            'Aubergine-Magenta': { r: 11, y: 0, b: 5, level: 'Quinary' },
+            'Magenta-Crimson': { r: 13, y: 0, b: 3, level: 'Quinary' },
+            'Crimson-Red': { r: 15, y: 0, b: 1, level: 'Quinary' }
+        };
+
+        // RGB lookup table for known RYB colors
+        const rybToRgbLookup = {
+            // Primary
+            '1,0,0': { r: 254, g: 39, b: 18 },     // Red
+            '0,1,0': { r: 254, g: 221, b: 0 },     // Yellow
+            '0,0,1': { r: 2, g: 71, b: 254 },      // Blue
+
+            // Secondary
+            '1,1,0': { r: 255, g: 102, b: 0 },     // Orange
+            '0,1,1': { r: 0, g: 153, b: 51 },      // Green
+            '1,0,1': { r: 134, g: 1, b: 175 },     // Purple
+
+            // Brown
+            '1,1,1': { r: 101, g: 67, b: 33 },     // Brown
+        };
+
+        // RYB to RGB conversion (takes Red, Yellow, Blue values)
+        function rybToRgb(r, y, b) {
+            const total = r + y + b;
+            if (total === 0) return { r: 128, g: 128, b: 128 };
+
+            // Normalize to simplified ratio for lookup
+            const simplified = simplifyRatio(r, y, b);
+            const lookupKey = `${simplified.r},${simplified.y},${simplified.b}`;
+
+            // Check if we have an exact lookup
+            if (rybToRgbLookup[lookupKey]) {
+                return rybToRgbLookup[lookupKey];
+            }
+
+            // For interpolation, we'll use a better RYB to RGB conversion
+            // Normalize
+            const rn = r / total;
+            const yn = y / total;
+            const bn = b / total;
+
+            // Improved RYB to RGB conversion using interpolation
+            // Use the primary colors as anchors
+            const red_rgb = { r: 254, g: 39, b: 18 };
+            const yellow_rgb = { r: 254, g: 221, b: 0 };
+            const blue_rgb = { r: 2, g: 71, b: 254 };
+
+            // White point
+            const white = { r: 255, g: 255, b: 255 };
+
+            // Blend based on RYB components
+            let rgb_r = white.r * (1 - rn - yn - bn);
+            let rgb_g = white.g * (1 - rn - yn - bn);
+            let rgb_b = white.b * (1 - rn - yn - bn);
+
+            rgb_r += red_rgb.r * rn + yellow_rgb.r * yn + blue_rgb.r * bn;
+            rgb_g += red_rgb.g * rn + yellow_rgb.g * yn + blue_rgb.g * bn;
+            rgb_b += red_rgb.b * rn + yellow_rgb.b * yn + blue_rgb.b * bn;
+
+            // Apply color mixing adjustments
+            // Orange (Red + Yellow)
+            if (rn > 0 && yn > 0 && bn === 0) {
+                const orange = { r: 255, g: 102, b: 0 };
+                const mix = Math.min(rn, yn);
+                rgb_r = rgb_r * (1 - mix) + orange.r * mix;
+                rgb_g = rgb_g * (1 - mix) + orange.g * mix;
+                rgb_b = rgb_b * (1 - mix) + orange.b * mix;
+            }
+            // Green (Yellow + Blue)
+            if (yn > 0 && bn > 0 && rn === 0) {
+                const green = { r: 0, g: 153, b: 51 };
+                const mix = Math.min(yn, bn);
+                rgb_r = rgb_r * (1 - mix) + green.r * mix;
+                rgb_g = rgb_g * (1 - mix) + green.g * mix;
+                rgb_b = rgb_b * (1 - mix) + green.b * mix;
+            }
+            // Purple (Red + Blue)
+            if (rn > 0 && bn > 0 && yn === 0) {
+                const purple = { r: 134, g: 1, b: 175 };
+                const mix = Math.min(rn, bn);
+                rgb_r = rgb_r * (1 - mix) + purple.r * mix;
+                rgb_g = rgb_g * (1 - mix) + purple.g * mix;
+                rgb_b = rgb_b * (1 - mix) + purple.b * mix;
+            }
+            // Brown (Red + Yellow + Blue)
+            if (rn > 0 && yn > 0 && bn > 0) {
+                const brown = { r: 101, g: 67, b: 33 };
+                const mix = Math.min(rn, yn, bn);
+                rgb_r = rgb_r * (1 - mix) + brown.r * mix;
+                rgb_g = rgb_g * (1 - mix) + brown.g * mix;
+                rgb_b = rgb_b * (1 - mix) + brown.b * mix;
+            }
+
+            return {
+                r: Math.min(255, Math.max(0, Math.round(rgb_r))),
+                g: Math.min(255, Math.max(0, Math.round(rgb_g))),
+                b: Math.min(255, Math.max(0, Math.round(rgb_b)))
+            };
+        }
+
+        function rgbToHex(rgb) {
+            return '#' + [rgb.r, rgb.g, rgb.b].map(x => {
+                const hex = x.toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        function simplifyRatio(r, y, b) {
+            // Find GCD of all three values
+            const findGCD = (a, b) => {
+                a = Math.abs(Math.round(a * 1000));
+                b = Math.abs(Math.round(b * 1000));
+                while (b > 0) {
+                    let temp = b;
+                    b = a % b;
+                    a = temp;
+                }
+                return a;
+            };
+            
+            const gcdAll = findGCD(findGCD(r, y), b);
+            if (gcdAll === 0) return { r: 0, y: 0, b: 0 };
+            
+            return {
+                r: Math.round(r * 1000 / gcdAll),
+                y: Math.round(y * 1000 / gcdAll),
+                b: Math.round(b * 1000 / gcdAll)
+            };
+        }
+
+        function gcd(a, b) {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            while (b !== 0) {
+                const temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        function simplifyFraction(num, den) {
+            if (den === 0) return { numerator: num, denominator: 1 };
+            const divisor = gcd(num, den);
+            return {
+                numerator: num / divisor,
+                denominator: den / divisor
+            };
+        }
+
+        function parseColorName(name) {
+            const normalized = name.trim().replace(/\s+/g, ' ').split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join('-');
+
+            if (colors[normalized]) {
+                return { ...colors[normalized] };
+            }
+
+            return null;
+        }
+
+        function parseCoordinate(coord) {
+            // Support both square brackets and parentheses
+            const match = coord.match(/^\s*[\[\(]\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^\]\)]+)\s*[\]\)]\s*$/);
+            if (!match) return null;
+
+            const parseValue = (str) => {
+                str = str.trim();
+                if (str.includes('/')) {
+                    const parts = str.split('/');
+                    const num = parseFloat(parts[0]);
+                    const den = parseFloat(parts[1]);
+                    if (isNaN(num) || isNaN(den) || den === 0) return NaN;
+                    return num / den;
+                }
+                return parseFloat(str);
+            };
+
+            const r = parseValue(match[1]);
+            const y = parseValue(match[2]);
+            const b = parseValue(match[3]);
+
+            if (isNaN(r) || isNaN(y) || isNaN(b) || r < 0 || y < 0 || b < 0) {
+                return null;
+            }
+
+            return { r, y, b };
+        }
+
+        function parseOperation(input) {
+            const tokens = [];
+            let current = '';
+            let inBracket = false;
+
+            for (let char of input) {
+                if (char === '[' || char === '(') {
+                    inBracket = true;
+                    current += char;
+                } else if (char === ']' || char === ')') {
+                    inBracket = false;
+                    current += char;
+                } else if (!inBracket && (char === '+' || char === '-')) {
+                    if (current.trim()) tokens.push(current.trim());
+                    tokens.push(char);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            if (current.trim()) tokens.push(current.trim());
+
+            const result = [];
+            for (let i = 0; i < tokens.length; i++) {
+                const token = tokens[i];
+
+                if (token === '+') {
+                    result.push({ operator: 'add' });
+                } else if (token === '-') {
+                    result.push({ operator: 'subtract' });
+                } else {
+                    let multiplier = 1;
+                    let colorPart = token;
+
+                    // Match "2*Green" or "2 * Green"
+                    const multMatch = token.match(/^([0-9.\/]+)\s*\*\s*(.+)$/);
+                    // Match "Green/2" or "Green / 2"
+                    const divMatch = token.match(/^(.+?)\s*\/\s*([0-9.]+)$/);
+                    // Match "2 Green" or "1/3 Red" (space-separated multiplier)
+                    const spaceMultMatch = token.match(/^([0-9]+(?:\/[0-9]+)?|\d+(?:\.\d+)?)\s+([A-Za-z].*)$/);
+                    // Match "2Green" or "3red" (no space - new!)
+                    const noSpaceMatch = token.match(/^([0-9]+(?:\/[0-9]+)?|\d+(?:\.\d+)?)([A-Za-z].*)$/);
+
+                    if (multMatch) {
+                        const multStr = multMatch[1];
+                        if (multStr.includes('/')) {
+                            const parts = multStr.split('/');
+                            multiplier = parseFloat(parts[0]) / parseFloat(parts[1]);
+                        } else {
+                            multiplier = parseFloat(multStr);
+                        }
+                        colorPart = multMatch[2].trim();
+                    } else if (divMatch && !spaceMultMatch && !noSpaceMatch) {
+                        // Only use divMatch if it's not a space-separated multiplier or no-space multiplier
+                        colorPart = divMatch[1].trim();
+                        multiplier = 1 / parseFloat(divMatch[2]);
+                    } else if (spaceMultMatch) {
+                        const multStr = spaceMultMatch[1];
+                        if (multStr.includes('/')) {
+                            const parts = multStr.split('/');
+                            multiplier = parseFloat(parts[0]) / parseFloat(parts[1]);
+                        } else {
+                            multiplier = parseFloat(multStr);
+                        }
+                        colorPart = spaceMultMatch[2].trim();
+                    } else if (noSpaceMatch) {
+                        // Handle "2red", "3blue", etc.
+                        const multStr = noSpaceMatch[1];
+                        if (multStr.includes('/')) {
+                            const parts = multStr.split('/');
+                            multiplier = parseFloat(parts[0]) / parseFloat(parts[1]);
+                        } else {
+                            multiplier = parseFloat(multStr);
+                        }
+                        colorPart = noSpaceMatch[2].trim();
+                    }
+
+                    if (isNaN(multiplier) || multiplier < 0) {
+                        return null;
+                    }
+
+                    let baseColor;
+                    if (colorPart.startsWith('[') || colorPart.startsWith('(')) {
+                        baseColor = parseCoordinate(colorPart);
+                    } else {
+                        baseColor = parseColorName(colorPart);
+                    }
+
+                    if (!baseColor) {
+                        return null;
+                    }
+
+                    // Normalize color to mass=1, then apply multiplier
+                    const mass = baseColor.r + baseColor.y + baseColor.b;
+                    if (mass === 0) {
+                        return null;
+                    }
+                    
+                    result.push({
+                        color: {
+                            r: (baseColor.r / mass) * multiplier,
+                            y: (baseColor.y / mass) * multiplier,
+                            b: (baseColor.b / mass) * multiplier
+                        }
+                    });
+                }
+            }
+
+            return result.length > 0 ? result : null;
+        }
+
+        function addColors(c1, c2) {
+            return {
+                r: c1.r + c2.r,
+                y: c1.y + c2.y,
+                b: c1.b + c2.b
+            };
+        }
+
+        function subtractColors(c1, c2) {
+            // Calculate the total mass of each color
+            const mass1 = c1.r + c1.y + c1.b;
+            const mass2 = c2.r + c2.y + c2.b;
+            
+            // Calculate the total mass (what c1 should be expanded to)
+            const totalMass = mass1 + mass2;
+            
+            // Expand c1 by the factor totalMass/mass1
+            const expansionFactor = totalMass / mass1;
+            const expandedC1 = {
+                r: c1.r * expansionFactor,
+                y: c1.y * expansionFactor,
+                b: c1.b * expansionFactor
+            };
+            
+            // Now subtract c2 from the expanded c1
+            const result = {
+                r: expandedC1.r - c2.r,
+                y: expandedC1.y - c2.y,
+                b: expandedC1.b - c2.b
+            };
+
+            // Check if any component is negative (impossible color)
+            if (result.r < 0 || result.y < 0 || result.b < 0) {
+                result.isImpossible = true;
+            }
+
+            return result;
+        }
+
+        function normalizeToMassOne(color) {
+            const mass = color.r + color.y + color.b;
+            if (mass === 0 || !isFinite(mass)) {
+                return null;
+            }
+            return {
+                r: color.r / mass,
+                y: color.y / mass,
+                b: color.b / mass
+            };
+        }
+
+        // Calculate Euclidean distance between two colors
+        function euclideanDistance(c1, c2) {
+            return Math.sqrt(
+                Math.pow(c1.r - c2.r, 2) +
+                Math.pow(c1.y - c2.y, 2) +
+                Math.pow(c1.b - c2.b, 2)
+            );
+        }
+
+        // Get all known colors (excluding Quinary for decomposition)
+        function getKnownColors() {
+            return Object.entries(colors)
+                .filter(([_, c]) => c.level !== 'Quinary')
+                .map(([name, coords]) => ({ name, ...coords }));
+        }
+
+        // Find the two closest known colors that can decompose the input color
+        // Returns { colorA, colorB, massA, massB } where the input = massA*A + massB*B
+        // where A and B are normalized to mass=1
+        function findTwoClosestColors(r, y, b) {
+            const knownColors = getKnownColors();
+            let bestDecomposition = null;
+            let bestError = Infinity;
+            
+            // Special case: if all three coordinates are non-zero, prioritize Brown
+            // since Brown is the only known color with all three components
+            const allNonZero = r > 0.0001 && y > 0.0001 && b > 0.0001;
+
+            // Try all pairs of known colors
+            for (let i = 0; i < knownColors.length; i++) {
+                for (let j = i; j < knownColors.length; j++) {
+                    const A_orig = knownColors[i];
+                    const B_orig = knownColors[j];
+                    
+                    // If all coords are non-zero, only consider pairs that include Brown
+                    if (allNonZero && A_orig.name !== 'Brown' && B_orig.name !== 'Brown') {
+                        continue;
+                    }
+                    
+                    // Normalize A and B to mass=1
+                    const A_mass = A_orig.r + A_orig.y + A_orig.b;
+                    const B_mass = B_orig.r + B_orig.y + B_orig.b;
+                    
+                    const A = {
+                        name: A_orig.name,
+                        r: A_orig.r / A_mass,
+                        y: A_orig.y / A_mass,
+                        b: A_orig.b / A_mass
+                    };
+                    
+                    const B = {
+                        name: B_orig.name,
+                        r: B_orig.r / B_mass,
+                        y: B_orig.y / B_mass,
+                        b: B_orig.b / B_mass
+                    };
+
+                    // Solve: r = n*A.r + m*B.r, y = n*A.y + m*B.y, b = n*A.b + m*B.b
+                    // This is an overdetermined system, so we'll use least squares approach
+                    // For simplicity, we'll try to solve using two of the three equations
+                    
+                    // Try different pairs of equations to find n and m
+                    const solutions = [];
+                    
+                    // Use R and Y equations
+                    const det1 = A.r * B.y - A.y * B.r;
+                    if (Math.abs(det1) > 0.001) {
+                        const n1 = (r * B.y - y * B.r) / det1;
+                        const m1 = (A.r * y - A.y * r) / det1;
+                        if (n1 >= -0.001 && m1 >= -0.001) {
+                            solutions.push({ n: Math.max(0, n1), m: Math.max(0, m1) });
+                        }
+                    }
+
+                    // Use R and B equations
+                    const det2 = A.r * B.b - A.b * B.r;
+                    if (Math.abs(det2) > 0.001) {
+                        const n2 = (r * B.b - b * B.r) / det2;
+                        const m2 = (A.r * b - A.b * r) / det2;
+                        if (n2 >= -0.001 && m2 >= -0.001) {
+                            solutions.push({ n: Math.max(0, n2), m: Math.max(0, m2) });
+                        }
+                    }
+
+                    // Use Y and B equations
+                    const det3 = A.y * B.b - A.b * B.y;
+                    if (Math.abs(det3) > 0.001) {
+                        const n3 = (y * B.b - b * B.y) / det3;
+                        const m3 = (A.y * b - A.b * y) / det3;
+                        if (n3 >= -0.001 && m3 >= -0.001) {
+                            solutions.push({ n: Math.max(0, n3), m: Math.max(0, m3) });
+                        }
+                    }
+
+                    // Evaluate each solution
+                    for (const sol of solutions) {
+                        const reconstructed = {
+                            r: sol.n * A.r + sol.m * B.r,
+                            y: sol.n * A.y + sol.m * B.y,
+                            b: sol.n * A.b + sol.m * B.b
+                        };
+
+                        const error = euclideanDistance({ r, y, b }, reconstructed);
+                        
+                        if (error < bestError) {
+                            bestError = error;
+                            // massA and massB are simply n and m since A and B are normalized
+                            bestDecomposition = {
+                                colorA: A.name,
+                                colorB: B.name,
+                                massA: sol.n,
+                                massB: sol.m,
+                                error: error
+                            };
+                        }
+                    }
+                }
+            }
+
+            return bestDecomposition;
+        }
+
+        function identifyColor(color) {
+            const { r, y, b } = color;
+            const totalMass = r + y + b;
+
+            if (totalMass < 0.0001) {
+                return { name: 'No Color (Black)', level: 'Special', r: 0, y: 0, b: 0 };
+            }
+
+            // Check for impossible colors (negative components)
+            if (color.isImpossible || r < 0 || y < 0 || b < 0) {
+                return {
+                    name: 'IMPOSSIBLE Color',
+                    level: 'Impossible',
+                    r: r,
+                    y: y,
+                    b: b,
+                    isImpossible: true
+                };
+            }
+
+            // Normalize the color
+            const r_norm = r / totalMass;
+            const y_norm = y / totalMass;
+            const b_norm = b / totalMass;
+
+            // STEP 0: Check for exact match in Primary, Secondary, Tertiary, Quaternary, Quinary
+            for (const [name, c] of Object.entries(colors)) {
+                const knownMass = c.r + c.y + c.b;
+                const c_r = c.r / knownMass;
+                const c_y = c.y / knownMass;
+                const c_b = c.b / knownMass;
+                
+                // Check if normalized coordinates match (within tolerance)
+                if (Math.abs(r_norm - c_r) < 0.0001 &&
+                    Math.abs(y_norm - c_y) < 0.0001 &&
+                    Math.abs(b_norm - c_b) < 0.0001) {
+                    return { name, level: c.level, r, y, b };
+                }
+            }
+
+            // STEP 1: Find anchor color A (closest by polar angle)
+            // We need to handle each 2D plane separately: RY (b=0), RB (y=0), YB (r=0)
+            
+            // Determine which plane the color is in (or closest to)
+            const planeThreshold = 0.01; // Small amount of the third component is ok
+            
+            let closestColor = null;
+            let minAngleDiff = Infinity;
+            let partnerColor = null;
+            
+            // Helper function to get angle in a 2D plane
+            const getAngle = (c1, c2) => {
+                return Math.atan2(c2, c1) * 180 / Math.PI;
+            };
+            
+            // Determine which plane to use
+            if (b_norm < planeThreshold) {
+                // Red-Yellow plane (z ≈ 0)
+                const targetAngle = getAngle(r_norm, y_norm);
+                
+                // Get all colors in this plane and sort by angle
+                const planeColors = [];
+                for (const [name, c] of Object.entries(colors)) {
+                    const cMass = c.r + c.y + c.b;
+                    const cNorm = { r: c.r / cMass, y: c.y / cMass, b: c.b / cMass };
+                    if (cNorm.b < planeThreshold) {
+                        planeColors.push({
+                            name,
+                            level: c.level,
+                            angle: getAngle(cNorm.r, cNorm.y),
+                            coords: c
+                        });
+                    }
+                }
+                planeColors.sort((a, b) => a.angle - b.angle);
+                
+                // Find closest by angle
+                for (let i = 0; i < planeColors.length; i++) {
+                    const angleDiff = Math.abs(planeColors[i].angle - targetAngle);
+                    if (angleDiff < minAngleDiff) {
+                        minAngleDiff = angleDiff;
+                        closestColor = planeColors[i];
+                        
+                        // Determine partner (adjacent neighbor on the X side)
+                        if (targetAngle < planeColors[i].angle && i > 0) {
+                            partnerColor = planeColors[i - 1];
+                        } else if (targetAngle > planeColors[i].angle && i < planeColors.length - 1) {
+                            partnerColor = planeColors[i + 1];
+                        }
+                    }
+                }
+            } else if (y_norm < planeThreshold) {
+                // Red-Blue plane (y ≈ 0)
+                const targetAngle = getAngle(r_norm, b_norm);
+                
+                const planeColors = [];
+                for (const [name, c] of Object.entries(colors)) {
+                    const cMass = c.r + c.y + c.b;
+                    const cNorm = { r: c.r / cMass, y: c.y / cMass, b: c.b / cMass };
+                    if (cNorm.y < planeThreshold) {
+                        planeColors.push({
+                            name,
+                            level: c.level,
+                            angle: getAngle(cNorm.r, cNorm.b),
+                            coords: c
+                        });
+                    }
+                }
+                planeColors.sort((a, b) => a.angle - b.angle);
+                
+                for (let i = 0; i < planeColors.length; i++) {
+                    const angleDiff = Math.abs(planeColors[i].angle - targetAngle);
+                    if (angleDiff < minAngleDiff) {
+                        minAngleDiff = angleDiff;
+                        closestColor = planeColors[i];
+                        
+                        if (targetAngle < planeColors[i].angle && i > 0) {
+                            partnerColor = planeColors[i - 1];
+                        } else if (targetAngle > planeColors[i].angle && i < planeColors.length - 1) {
+                            partnerColor = planeColors[i + 1];
+                        }
+                    }
+                }
+            } else if (r_norm < planeThreshold) {
+                // Yellow-Blue plane (r ≈ 0)
+                const targetAngle = getAngle(y_norm, b_norm);
+                
+                const planeColors = [];
+                for (const [name, c] of Object.entries(colors)) {
+                    const cMass = c.r + c.y + c.b;
+                    const cNorm = { r: c.r / cMass, y: c.y / cMass, b: c.b / cMass };
+                    if (cNorm.r < planeThreshold) {
+                        planeColors.push({
+                            name,
+                            level: c.level,
+                            angle: getAngle(cNorm.y, cNorm.b),
+                            coords: c
+                        });
+                    }
+                }
+                planeColors.sort((a, b) => a.angle - b.angle);
+                
+                for (let i = 0; i < planeColors.length; i++) {
+                    const angleDiff = Math.abs(planeColors[i].angle - targetAngle);
+                    if (angleDiff < minAngleDiff) {
+                        minAngleDiff = angleDiff;
+                        closestColor = planeColors[i];
+                        
+                        if (targetAngle < planeColors[i].angle && i > 0) {
+                            partnerColor = planeColors[i - 1];
+                        } else if (targetAngle > planeColors[i].angle && i < planeColors.length - 1) {
+                            partnerColor = planeColors[i + 1];
+                        }
+                    }
+                }
+            } else {
+                // Color has all three components (Brown family)
+                // Use the old algorithm for these
+                const decomposition = findTwoClosestColors(r, y, b);
+                
+                if (decomposition && decomposition.error < totalMass * 0.01) {
+                    const { colorA, colorB, massA, massB } = decomposition;
+                    
+                    let largerColor, smallerColor, largerMass, smallerMass;
+                    if (massA >= massB) {
+                        largerColor = colorA;
+                        smallerColor = colorB;
+                        largerMass = massA;
+                        smallerMass = massB;
+                    } else {
+                        largerColor = colorB;
+                        smallerColor = colorA;
+                        largerMass = massB;
+                        smallerMass = massA;
+                    }
+
+                    if (Math.abs(massA - massB) < 0.0001) {
+                        return { 
+                            name: `${colorA}-${colorB}`, 
+                            level: 'Custom', 
+                            r, y, b 
+                        };
+                    }
+
+                    // Changed from 2 to 1.75 for consistency with polar angle threshold (3.75° = 15/4)
+                    if (largerMass <= 1.75 * smallerMass) {
+                        return { 
+                            name: `${smallerColor}ish-${largerColor}`, 
+                            level: 'Custom', 
+                            r, y, b 
+                        };
+                    }
+
+                    return { 
+                        name: `Shade of ${largerColor}`, 
+                        level: 'Custom', 
+                        r, y, b 
+                    };
+                }
+                
+                return { name: 'Brown-like', level: 'Custom', r, y, b };
+            }
+
+            // STEP 2 & 3: Apply naming rules based on angle difference
+            if (!closestColor) {
+                return { name: 'Unknown Color', level: 'Custom', r, y, b };
+            }
+            
+            const angleDiff = minAngleDiff;
+            
+            // STEP 4: Name based on thresholds
+            if (angleDiff < 1.0) {
+                // Very close to anchor color
+                return { 
+                    name: closestColor.name, 
+                    level: closestColor.level, 
+                    r, y, b 
+                };
+            } else if (angleDiff < 3.75) {
+                // Shade of anchor color (15/4 = 3.75)
+                return { 
+                    name: `Shade of ${closestColor.name}`, 
+                    level: 'Custom', 
+                    r, y, b 
+                };
+            } else if (angleDiff < 7.5 && partnerColor) {
+                // Between anchor and partner (15/2 = 7.5)
+                return { 
+                    name: `${partnerColor.name}ish-${closestColor.name}`, 
+                    level: 'Custom', 
+                    r, y, b 
+                };
+            } else {
+                // Fallback (shouldn't normally happen)
+                return { 
+                    name: `Shade of ${closestColor.name}`, 
+                    level: 'Custom', 
+                    r, y, b 
+                };
+            }
+        }
+
+        function simplifyToIntegers(r, y, b) {
+            // First, try to detect common fractions (1/2, 1/3, 1/4, etc.) with reasonable precision
+            const findFraction = (val) => {
+                // Try denominators up to 24 (covers most common fractions)
+                for (let den = 1; den <= 24; den++) {
+                    const num = Math.round(val * den);
+                    if (Math.abs(val - num / den) < 0.0001) {
+                        return { num, den };
+                    }
+                }
+                // Fall back to high precision
+                return { num: Math.round(val * 1000000), den: 1000000 };
+            };
+            
+            const r_frac = findFraction(r);
+            const y_frac = findFraction(y);
+            const b_frac = findFraction(b);
+            
+            // Find LCM of denominators
+            const lcm = (a, b) => Math.abs(a * b) / gcd(a, b);
+            const commonDen = lcm(lcm(r_frac.den, y_frac.den), b_frac.den);
+            
+            // Convert to common denominator
+            let r_int = r_frac.num * (commonDen / r_frac.den);
+            let y_int = y_frac.num * (commonDen / y_frac.den);
+            let b_int = b_frac.num * (commonDen / b_frac.den);
+            
+            // Find GCD of all three numerators
+            const gcd3 = (a, b, c) => {
+                return gcd(gcd(Math.abs(a), Math.abs(b)), Math.abs(c));
+            };
+            
+            const divisor = gcd3(r_int, y_int, b_int);
+            
+            if (divisor === 0) return { r: 0, y: 0, b: 0 };
+            
+            r_int = Math.round(r_int / divisor);
+            y_int = Math.round(y_int / divisor);
+            b_int = Math.round(b_int / divisor);
+            
+            // If numbers are still too large (> 1000), scale them down
+            const maxVal = Math.max(Math.abs(r_int), Math.abs(y_int), Math.abs(b_int));
+            if (maxVal > 1000) {
+                const scale = 1000 / maxVal;
+                r_int = Math.round(r_int * scale);
+                y_int = Math.round(y_int * scale);
+                b_int = Math.round(b_int * scale);
+                
+                // Re-simplify after scaling
+                const divisor2 = gcd3(r_int, y_int, b_int);
+                if (divisor2 > 0) {
+                    r_int = Math.round(r_int / divisor2);
+                    y_int = Math.round(y_int / divisor2);
+                    b_int = Math.round(b_int / divisor2);
+                }
+            }
+            
+            return { r: r_int, y: y_int, b: b_int };
+        }
+
+        function displayResult(container, result) {
+            if (result.error) {
+                container.innerHTML = `
+                    <div class="result error">
+                        <h3>Error</h3>
+                        <p>${result.error}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Handle impossible colors
+            if (result.isImpossible) {
+                const simplified = simplifyToIntegers(result.r, result.y, result.b);
+                container.innerHTML = `
+                    <div class="result" style="border-color: #ffc107; background: #fff3cd;">
+                        <h3 style="color: #856404;">IMPOSSIBLE Color</h3>
+                        <p style="color: #856404;"><strong>Notice:</strong> This color contains negative components and cannot physically exist in the real world.</p>
+                        <div class="color-info">
+                            <p><strong>Mathematical Coordinates:</strong> [${simplified.r}, ${simplified.y}, ${simplified.b}]</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const rgb = rybToRgb(result.r, result.y, result.b);
+            const hex = rgbToHex(rgb);
+            
+            // Simplify coordinates to integers
+            const simplified = simplifyToIntegers(result.r, result.y, result.b);
+
+            container.innerHTML = `
+                <div class="result">
+                    <h3>Result</h3>
+                    <div class="color-display">
+                        <div class="color-swatch" style="background-color: ${hex};"></div>
+                        <div class="color-info">
+                            <p><strong>${result.name}</strong></p>
+                            <p>Level: ${result.level}</p>
+                            <p>Coordinates: [${simplified.r}, ${simplified.y}, ${simplified.b}]</p>
+                            <p>RGB: ${hex}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function processOperation() {
+            const input = document.getElementById('mixInput').value;
+            const result = document.getElementById('mixResult');
+
+            if (!input.trim()) {
+                result.innerHTML = '';
+                return;
+            }
+
+            try {
+                const operations = parseOperation(input);
+                if (!operations) {
+                    result.innerHTML = `
+                        <div class="result error">
+                            <h3>Invalid Input</h3>
+                            <p><strong>Valid inputs:</strong></p>
+                            <ul style="margin-left: 20px; margin-top: 10px; text-align: left;">
+                                <li><strong>Color names:</strong> Red, Blue, Yellow, Orange, Green, Purple, Brown, Vermilion, Amber, etc. (capitalization doesn't matter)</li>
+                                <li><strong>Coordinates:</strong> Use brackets [1,0,1] or parentheses (1,0,1)</li>
+                                <li><strong>Operations:</strong> Use + (add), - (subtract), * or space (multiply)</li>
+                                <li><strong>Examples:</strong> "2*Brown + Lemon", "2red+yellow", "(1,1,1)", "[0,1,0.5]"</li>
+                            </ul>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Check if first color has an error
+                if (operations[0].color.error) {
+                    result.innerHTML = `
+                        <div class="result error">
+                            <h3>Error</h3>
+                            <p>${operations[0].color.error}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // If only one term, it's a lookup
+                if (operations.length === 1) {
+                    const color = operations[0].color;
+                    const identified = identifyColor(color);
+                    displayResult(result, identified);
+                    return;
+                }
+
+                // Process operations left to right
+                let currentColor = operations[0].color;
+
+                for (let i = 1; i < operations.length; i += 2) {
+                    const operator = operations[i];
+                    const nextColor = operations[i + 1].color;
+
+                    // Check for errors in the next color
+                    if (nextColor.error) {
+                        result.innerHTML = `
+                            <div class="result error">
+                                <h3>Error</h3>
+                                <p>${nextColor.error}</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    if (operator.operator === 'add') {
+                        currentColor = addColors(currentColor, nextColor);
+                    } else {
+                        currentColor = subtractColors(currentColor, nextColor);
+                        if (currentColor.error) {
+                            displayResult(result, currentColor);
+                            return;
+                        }
+                    }
+                }
+
+                // Identify the final color
+                const finalResult = identifyColor(currentColor);
+                displayResult(result, finalResult);
+            } catch (error) {
+                console.error('Error processing operation:', error);
+                result.innerHTML = `
+                    <div class="result error">
+                        <h3>Error</h3>
+                        <p>Something went wrong processing your input. Please try again.</p>
+                        <p>Error details: ${error.message}</p>
+                        <p>Examples: "Blue + Red", "[1,0,1] + [0,0,1]", "Brown", "1/3 Yellow"</p>
+                    </div>
+                `;
+            }
+        }
+
+        function clearMix() {
+            document.getElementById('mixInput').value = '';
+            document.getElementById('mixResult').innerHTML = '';
+        }
+
+        function showColorModal(name, colorData) {
+            const modal = document.getElementById('colorModal');
+            const modalContent = document.getElementById('modalColorDetails');
+
+            const rgb = rybToRgb(colorData.r, colorData.y, colorData.b);
+            const hex = rgbToHex(rgb);
+
+            modalContent.innerHTML = `
+                <div class="color-display">
+                    <div class="color-swatch" style="background-color: ${hex};"></div>
+                    <div class="color-info">
+                        <p><strong>${name}</strong></p>
+                        <p>Level: ${colorData.level}</p>
+                        <p>Coordinates: [${colorData.r}, ${colorData.y}, ${colorData.b}]</p>
+                        <p>RGB: ${hex}</p>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('active');
+        }
+
+        function closeColorModal() {
+            const modal = document.getElementById('colorModal');
+            modal.classList.remove('active');
+        }
+
+        function populateReference() {
+            const container = document.getElementById('colorReference');
+            // Exclude Quinary from display
+            const levels = ['Primary', 'Secondary', 'Tertiary', 'Quaternary', 'Brown'];
+
+            let html = '';
+            levels.forEach(level => {
+                const levelColors = Object.entries(colors).filter(([_, c]) => c.level === level);
+                if (levelColors.length > 0) {
+                    // For Brown, just show "Brown" without count
+                    const header = level === 'Brown' ? level : `${level} Colors (${levelColors.length})`;
+                    html += `<h3 style="margin-top: 20px; margin-bottom: 10px; color: #667eea;">${header}</h3>`;
+                    html += '<div class="color-grid">';
+                    levelColors.forEach(([name, c]) => {
+                        const rgb = rybToRgb(c.r, c.y, c.b);
+                        const hex = rgbToHex(rgb);
+                        html += `
+                            <div class="color-card" onclick="showColorModal('${name}', ${JSON.stringify(c).replace(/"/g, '&quot;')})">
+                                <div class="color-card-header">
+                                    <div class="color-card-swatch" style="background-color: ${hex};"></div>
+                                    <div class="color-card-name">${name}</div>
+                                </div>
+                                <div class="color-card-coord">[${c.r}, ${c.y}, ${c.b}]</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Initialize
+        populateReference();
+
+        // Allow Enter key to submit
+        document.getElementById('mixInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') processOperation();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('colorModal').addEventListener('click', (e) => {
+            if (e.target.id === 'colorModal') {
+                closeColorModal();
+            }
+        });
+    </script>
+</body>
+</html>
